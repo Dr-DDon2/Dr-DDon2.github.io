@@ -268,7 +268,8 @@ table.data tbody tr:last-child td { border-bottom: 0; }
 .donut { width: 150px; height: 150px; flex: none; position: relative; }
 .donut svg { transform: rotate(-90deg); }
 .donut .donut-center {
-  position: absolute; inset: 0; display: grid; place-items: center; text-align: center; line-height: 1.1;
+  position: absolute; inset: 0; display: grid; place-items: center; align-content: center;
+  gap: 2px; text-align: center; line-height: 1.1;
 }
 .donut .donut-center strong { font-size: 1.3rem; letter-spacing: -.03em; display: block; }
 .donut .donut-center small { font-size: .66rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
