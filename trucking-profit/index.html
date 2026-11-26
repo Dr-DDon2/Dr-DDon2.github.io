@@ -426,7 +426,20 @@ break-even rate    = operating cost ÷ (1 − fee %)                       flat 
     'maintPerMile', 'insPerMile', 'fixedCost', 'hours'].forEach(function (id) {
     $(id).addEventListener('input', render);
   });
-  $('rateMode').addEventListener('change', render);
+
+  /* Switching the rate basis keeps the revenue the same, so $2.40 a loaded
+     mile on a 500-mile run becomes a $1,200 flat rate rather than $2.40. */
+  var prevMode = $('rateMode').value;
+  $('rateMode').addEventListener('change', function () {
+    var mode = this.value;
+    var loaded = parseFloat($('loadedMiles').value) || 0;
+    var rate = parseFloat($('rate').value) || 0;
+    if (mode !== prevMode && loaded > 0) {
+      $('rate').value = mode === 'flat' ? +(rate * loaded).toFixed(2) : +(rate / loaded).toFixed(2);
+    }
+    prevMode = mode;
+    render();
+  });
 
   render();
 })();
