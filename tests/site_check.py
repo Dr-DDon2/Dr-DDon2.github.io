@@ -8,7 +8,11 @@ from html.parser import HTMLParser
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 pages = ["index.html", "concrete/index.html", "seller-fee/index.html", "edpi/index.html",
-         "about/index.html", "contact/index.html", "privacy-policy/index.html", "404.html"]
+         "trucking-profit/index.html", "gravel-mulch/index.html", "cobra-vs-aca/index.html",
+         "ev-vs-gas/index.html", "about/index.html", "contact/index.html",
+         "privacy-policy/index.html", "404.html"]
+TOOL_PAGES = ("concrete/", "seller-fee/", "edpi/", "trucking-profit/", "gravel-mulch/",
+              "cobra-vs-aca/", "ev-vs-gas/")
 
 fail = []
 
@@ -90,7 +94,7 @@ for rel in pages:
                 fail.append(f"{rel}: broken link {target}")
 
     words = len(re.findall(r"[A-Za-z0-9’'$%.,-]+", " ".join(c.prose_text)))
-    if "concrete/" in rel or "seller-fee/" in rel or "edpi/" in rel:
+    if any(k in rel for k in TOOL_PAGES):
         status = "OK " if words >= 1000 else "LOW"
         print(f"{status} prose words {rel:<24} {words:>5}")
         if words < 1000:
@@ -101,7 +105,9 @@ for rel in pages:
 # required files
 for f in ["sitemap.xml", "robots.txt", "favicon.svg", ".nojekyll",
           "assets/css/style.css", "assets/js/site.js",
-          "assets/js/calc-concrete.js", "assets/js/calc-seller.js", "assets/js/calc-sens.js"]:
+          "assets/js/calc-concrete.js", "assets/js/calc-seller.js", "assets/js/calc-sens.js",
+          "assets/js/calc-trucking.js", "assets/js/calc-gravel.js", "assets/js/calc-cobra.js",
+          "assets/js/calc-ev.js"]:
     if not (ROOT / f).exists():
         fail.append(f"missing required file {f}")
 

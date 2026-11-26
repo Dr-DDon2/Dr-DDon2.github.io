@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trucking Cost Per Mile &amp; Break-Even Rate Calculator (Owner-Operator)</title>
+<meta name="description" content="Free cost-per-mile calculator for owner-operators and delivery drivers: loaded and deadhead miles, fuel, maintenance and insurance reserves, broker and factoring fees. See your true CPM, profit per mile, profit per hour and the break-even rate for a load.">
+<link rel="canonical" href="https://dr-ddon2.github.io/trucking-profit/">
+<meta name="theme-color" content="#4f46e5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Trucking Cost Per Mile &amp; Break-Even Rate Calculator">
+<meta property="og:description" content="True cost per mile, net profit, profit per hour and the break-even rate for any load — with every formula shown.">
+<meta property="og:url" content="https://dr-ddon2.github.io/trucking-profit/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('tb-theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Trucking Cost Per Mile and Break-Even Rate Calculator","url":"https://dr-ddon2.github.io/trucking-profit/","applicationCategory":"BusinessApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Calculate the true cost per mile for an owner-operator or delivery driver, including fuel, maintenance and insurance reserves, broker and factoring fees, net profit per mile and the break-even rate for a load."}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is a good cost per mile for an owner-operator?","acceptedAnswer":{"@type":"Answer","text":"Most owner-operators running a tractor-trailer land between $1.60 and $2.20 per mile all-in, depending on fuel prices, truck payment, insurance and how many miles the truck covers each month. A paid-off truck with low fixed costs can be under $1.50; a new truck with a large payment and high insurance can exceed $2.30. The number that matters is your own, from your own receipts."}},
+{"@type":"Question","name":"Should deadhead miles be included in cost per mile?","acceptedAnswer":{"@type":"Answer","text":"Yes. Every mile the truck turns costs fuel and puts wear on tires, so all miles belong in the denominator. Dividing total cost by loaded miles only makes the rate look better than it is, because the truck burned the fuel either way."}},
+{"@type":"Question","name":"What is a break-even rate?","acceptedAnswer":{"@type":"Answer","text":"The rate at which a load earns exactly zero profit after fuel, reserves, fixed costs and fees. Below it you lose money on the run even though money lands in the account. It is the floor for negotiating, not a target."}},
+{"@type":"Question","name":"How much should I set aside for maintenance and tires?","acceptedAnswer":{"@type":"Answer","text":"A common planning figure is 15 to 25 cents per mile for a well-maintained tractor-trailer, with tires alone around 3 to 5 cents per mile. Older trucks and heavy hauling sit at the top of the range. Track your own repair invoices over a year and divide by the miles you ran."}},
+{"@type":"Question","name":"Do broker fees count as a cost per mile?","acceptedAnswer":{"@type":"Answer","text":"They come off the top of the revenue rather than adding to the cost of running the truck, so this calculator treats them as a deduction from gross revenue. Either way they lower what you keep, which is why the all-in figure here includes them."}}]}
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="/#tools" class="nav-hub">All tools</a>
+      <a href="/concrete/" class="nav-tool">Concrete</a>
+      <a href="/seller-fee/" class="nav-tool">Seller fees</a>
+      <a href="/trucking-profit/" class="nav-tool" aria-current="page">Trucking</a>
+      <a href="/gravel-mulch/" class="nav-tool">Gravel</a>
+      <a href="/cobra-vs-aca/" class="nav-tool">COBRA/ACA</a>
+      <a href="/ev-vs-gas/" class="nav-tool">EV/gas</a>
+      <a href="/edpi/" class="nav-tool">eDPI</a>
+      <a href="/about/">About</a>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1111.2 3a6.6 6.6 0 009.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span>Trucking cost per mile</nav>
+      <h1>Trucking Cost Per Mile &amp; Break-Even Rate Calculator</h1>
+      <p>Enter one load or a month of running and see what the miles actually cost: operating cost per mile, all-in cost with broker and factoring fees, net profit, profit per hour and the lowest rate that does not lose money.</p>
+    </div>
+
+    <div class="tool-layout">
+      <!-- INPUTS -->
+      <section class="panel" aria-labelledby="inputs-h">
+        <h2 id="inputs-h">The run</h2>
+        <p class="panel-sub">Use one load or a whole month — the maths is per-mile and scales either way.</p>
+
+        <div class="row">
+          <div class="field">
+            <label for="loadedMiles">Loaded miles</label>
+            <div class="input-group">
+              <input id="loadedMiles" type="number" inputmode="decimal" min="0" step="any" value="500">
+              <select aria-label="Unit" disabled><option>mi</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="deadheadMiles">Deadhead (empty) miles</label>
+            <div class="input-group">
+              <input id="deadheadMiles" type="number" inputmode="decimal" min="0" step="any" value="60">
+              <select aria-label="Unit" disabled><option>mi</option></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="rate">What the load pays</label>
+          <div class="input-group">
+            <input id="rate" type="number" inputmode="decimal" min="0" step="any" value="2.40">
+            <select id="rateMode" aria-label="Rate basis">
+              <option value="permile" selected>$ / loaded mi</option>
+              <option value="flat">$ / load</option>
+            </select>
+          </div>
+          <p class="hint">A per-mile rate applies to loaded miles only; deadhead is unpaid in both modes.</p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="brokerPct">Broker / dispatch fee</label>
+            <div class="input-group">
+              <input id="brokerPct" type="number" inputmode="decimal" min="0" step="any" value="8">
+              <select aria-label="Unit" disabled><option>%</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="factoringPct">Factoring fee</label>
+            <div class="input-group">
+              <input id="factoringPct" type="number" inputmode="decimal" min="0" step="any" value="3">
+              <select aria-label="Unit" disabled><option>%</option></select>
+            </div>
+          </div>
+        </div>
+        <p class="hint" style="margin-top:-6px">Both come off gross revenue. Set either to 0 if you do not use them.</p>
+
+        <div class="row">
+          <div class="field">
+            <label for="mpg">Fuel economy</label>
+            <div class="input-group">
+              <input id="mpg" type="number" inputmode="decimal" min="0" step="any" value="6.5">
+              <select aria-label="Unit" disabled><option>MPG</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="fuelPrice">Diesel price</label>
+            <div class="input-group">
+              <select aria-label="Currency" disabled><option>$</option></select>
+              <input id="fuelPrice" type="number" inputmode="decimal" min="0" step="any" value="3.85">
+              <select aria-label="Unit" disabled><option>/ gal</option></select>
+            </div>
+          </div>
+        </div>
+
+        <details class="advanced" open>
+          <summary>Reserves and fixed costs</summary>
+          <div class="adv-body">
+            <div class="row">
+              <div class="field">
+                <label for="maintPerMile">Maintenance &amp; tires</label>
+                <div class="input-group">
+                  <select aria-label="Currency" disabled><option>$</option></select>
+                  <input id="maintPerMile" type="number" inputmode="decimal" min="0" step="any" value="0.18">
+                  <select aria-label="Unit" disabled><option>/ mi</option></select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="insPerMile">Insurance reserve</label>
+                <div class="input-group">
+                  <select aria-label="Currency" disabled><option>$</option></select>
+                  <input id="insPerMile" type="number" inputmode="decimal" min="0" step="any" value="0.09">
+                  <select aria-label="Unit" disabled><option>/ mi</option></select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label for="fixedCost">Fixed &amp; other costs</label>
+                <div class="input-group">
+                  <select aria-label="Currency" disabled><option>$</option></select>
+                  <input id="fixedCost" type="number" inputmode="decimal" min="0" step="any" value="150">
+                  <select aria-label="Unit" disabled><option>total</option></select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="hours">Driving &amp; on-duty hours <span class="muted">(optional)</span></label>
+                <div class="input-group">
+                  <input id="hours" type="number" inputmode="decimal" min="0" step="any" value="11">
+                  <select aria-label="Unit" disabled><option>hrs</option></select>
+                </div>
+              </div>
+            </div>
+            <p class="hint">Fixed &amp; other: truck and trailer payment, permits, ELD, parking, tolls, phone and software for this run or month — whatever is not already in the per-mile figures.</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- RESULTS -->
+      <section class="panel result-hero results" aria-live="polite" aria-labelledby="result-h">
+        <span class="label" id="result-h">Net profit on this run</span>
+        <div class="big-number" id="profitHero">$435.11</div>
+        <div class="big-sub" id="profitSub">$0.78 per mile · 40.7% margin</div>
+
+        <div class="kpi-grid">
+          <div class="kpi"><div class="k-label">Operating cost per mile</div><div class="k-value" id="kvCpm">$1.130</div></div>
+          <div class="kpi"><div class="k-label">All-in cost per mile</div><div class="k-value" id="kvAllIn">$1.366</div></div>
+          <div class="kpi"><div class="k-label">Net revenue</div><div class="k-value" id="kvRevenue">$1,068</div></div>
+          <div class="kpi"><div class="k-label">Profit per hour</div><div class="k-value" id="kvHour">$39.56</div></div>
+        </div>
+
+        <div style="margin-top:20px">
+          <div class="stackbar" id="costBar" role="img" aria-label="How the money is spent, by share of all-in cost"></div>
+          <div class="legend" id="costLegend"></div>
+        </div>
+
+        <div style="margin-top:18px">
+          <div class="breakdown" id="breakdown"></div>
+        </div>
+
+        <div class="note" id="beNote"><strong>Break-even:</strong> $1.42 per loaded mile.</div>
+        <div class="note" id="dhNote"></div>
+        <div class="note" id="errorNote" hidden style="border-left-color:var(--bad)"></div>
+      </section>
+    </div>
+
+    <div class="ad-slot" aria-hidden="true"><!-- reserved ad space, no ad code until the site is approved --></div>
+
+    <!-- LONG FORM CONTENT -->
+    <section class="prose">
+      <h2>What this calculator actually measures</h2>
+      <p>A load paying $2.40 a mile sounds like a good day until the fuel, the truck payment and the broker’s cut are taken out. Cost per mile (CPM) is the single number that turns a rate sheet into a decision: it is what one mile of running the truck costs you, all in, before anybody pays you for it. Compare it with the rate per mile you are offered and you know instantly whether the load adds money or quietly takes it away.</p>
+      <p>The catch is that most drivers calculate CPM three different ways and then wonder why the bank account disagrees with the spreadsheet. Some divide cost by loaded miles only, which flatters the number because the truck also burned fuel getting to the shipper. Some leave out the money they should be saving for tyres and the engine overhaul that is coming in 80,000 miles. Some leave out broker and factoring fees entirely, because they never appear on a fuel receipt. This page keeps all of it in one place and labels each part, so you can see which figure is which.</p>
+      <p>It works for a single load and for a month of running. Enter one run to decide whether to book it; enter a month of totals to find your real operating cost and the rate below which the whole business stops working. The maths is linear per mile, so the shape of the answer does not change with the period — only the fixed costs do.</p>
+
+      <h2>The inputs, one at a time</h2>
+      <p><strong>Loaded miles</strong> are the miles you are paid to run, from shipper to receiver. <strong>Deadhead miles</strong> are everything else: the empty run to the pickup, the reposition between loads, the trip home. Both go into the mileage total, because both cost fuel, tyres and time. A run with 60 empty miles on 500 loaded ones is 10.7 percent deadhead, which is normal for regional freight and high for a dedicated lane.</p>
+      <p><strong>Rate</strong> can be entered per loaded mile or as a flat amount per load. Per-mile rates are the norm in truckload freight; flat rates are common for local delivery, aggregate hauling and short dedicated routes. The calculator applies a per-mile rate to loaded miles only, because that is how the rate confirmation is written — you are not paid for the empty approach unless the broker agreed to it separately. If a rate confirmation does pay deadhead, add those miles to the loaded figure and price it accordingly.</p>
+      <p><strong>Broker and dispatch fees</strong> are a percentage of the gross rate, taken by the broker who found the load or by a dispatch service. <strong>Factoring</strong> is the fee for selling the invoice for cash now instead of waiting 30 to 60 days; it is typically 1 to 5 percent depending on volume and credit risk. Both reduce revenue rather than adding to the cost of running the truck, which is why the main breakdown here subtracts them from gross revenue. They still lower what you keep, so the all-in cost per mile on the results panel includes them.</p>
+      <p><strong>Fuel economy and diesel price</strong> give the fuel line: miles divided by MPG, multiplied by dollars per gallon. Use the MPG the truck actually returns on the routes you run, not the sticker figure. A tractor that shows 7.2 MPG on flat interstate can drop to 5.4 in mountains or with a heavy trailer, and that swing is worth tens of cents a mile.</p>
+      <p><strong>Maintenance and insurance reserves</strong> are per-mile amounts you set aside whether or not you spend them this week. Reserving 18 cents a mile for maintenance and tyres and 9 cents a mile for insurance is a common owner-operator pattern, but the right number is yours: total a year of repair invoices plus tyre bills and divide by the miles you ran. Insurance is usually billed monthly, so dividing the annual premium by annual miles turns it into a per-mile figure that behaves properly on short runs.</p>
+      <p><strong>Fixed and other costs</strong> covers everything the per-mile lines miss: the truck and trailer payment, permits, the ELD subscription, parking, tolls, a phone, load-board fees, and the inevitable small purchases at the counter. Enter it for the same period as the miles.</p>
+
+      <h2>The formulas this page uses</h2>
+      <p>Nothing is hidden. The whole engine is these lines, applied in this order:</p>
+      <div class="formula">total miles        = loaded miles + deadhead miles
+gross revenue      = rate × loaded miles          (or the flat rate per load)
+fees               = gross revenue × (broker % + factoring %) ÷ 100
+net revenue        = gross revenue − fees
+gallons            = total miles ÷ MPG
+fuel cost          = gallons × price per gallon
+operating cost     = fuel + (maintenance $/mi × miles) + (insurance $/mi × miles) + fixed
+cost per mile      = operating cost ÷ total miles
+all-in cost/mile   = (operating cost + fees) ÷ total miles
+net profit         = net revenue − operating cost
+break-even rate    = operating cost ÷ ((1 − fee %) × loaded miles)      per-mile mode
+break-even rate    = operating cost ÷ (1 − fee %)                       flat mode</div>
+      <p>Note the order of operations in the break-even line. Fees are a percentage of the rate, so the rate has to be large enough that the truck’s costs fit inside what is left after the fee is taken. Dividing by one minus the fee percentage is the algebraic way of saying “gross up the rate until the remainder covers the cost”. If the fees total 11 percent, a break-even rate of $1.42 per loaded mile means roughly 16 cents of every dollar goes to the broker and the factor before the truck sees it.</p>
+
+      <h2>Worked example: 500 loaded miles and 60 empty, at $2.40 a mile</h2>
+      <div class="example">
+        <div class="ex-head">A regional dry-van load</div>
+        <p>Gross revenue is 500 × $2.40 = <strong>$1,200</strong>. An 8 percent broker fee is $96 and a 3 percent factoring fee is $36, leaving <strong>$1,068</strong> of net revenue. At 6.5 MPG over 560 total miles the truck burns 86.2 gallons; at $3.85 a gallon that is <strong>$331.69</strong> of diesel.</p>
+        <p>Maintenance at 18 cents a mile is $100.80, insurance at 9 cents is $50.40, and fixed costs of $150 cover the payment, permits and tolls for the day. Operating cost totals <strong>$632.89</strong>, or <strong>$1.13 per mile</strong> over 560 miles. Net profit is $435.11, which is 78 cents a mile and, over 11 on-duty hours, <strong>$39.56 an hour</strong>. The break-even rate is $632.89 ÷ (0.89 × 500) = <strong>$1.42 per loaded mile</strong>, so the load clears its own costs with room to spare.</p>
+      </div>
+
+      <h2>Worked example: a flat-rate local route</h2>
+      <div class="example">
+        <div class="ex-head">400 loaded, 100 empty, $900 for the day</div>
+        <p>Local aggregate and delivery work often pays by the load or the day rather than by the mile. Here the gross is <strong>$900</strong>, a 10 percent broker fee takes $90, and net revenue is $810. Fuel at 5 MPG over 500 miles is 100 gallons; at $3.70 that is $370. Maintenance at 20 cents adds $100 and insurance at 10 cents adds $50.</p>
+        <p>Operating cost is <strong>$520</strong>, so the day nets <strong>$290</strong> at a cost of $1.04 per mile. In flat mode the break-even number is a price, not a rate: $520 ÷ 0.90 = <strong>$577.78 for the load</strong>. Below that figure the day costs you money. Notice how much better the per-mile rate looks on paper — $900 over 400 paid miles is $2.25 a mile — while the actual profit is 58 cents a mile once the empty leg is counted.</p>
+      </div>
+
+      <h2>Worked example: a month of running</h2>
+      <div class="example">
+        <div class="ex-head">7,800 loaded and 8,500 total miles</div>
+        <p>Monthly miles smooth out the good and bad weeks. With 7,800 loaded miles at $2.55 and 700 deadhead miles, gross revenue is $19,890. A 7 percent broker fee and 3 percent factoring take $1,989, leaving $17,901. At 6.8 MPG over 8,500 miles the truck burns 1,250 gallons; at $3.75 that is $4,687.50. Maintenance at 19 cents is $1,615, insurance at 12 cents is $1,020, and the fixed line is $2,600 for the payment, trailer, permits and parking.</p>
+        <p>Operating cost is $9,922.50, or <strong>$1.17 a mile</strong>, and the month nets <strong>$7,978.50</strong> — 94 cents a mile over 8,500 miles. Across 200 on-duty hours that is $39.89 an hour. The break-even rate is $9,922.50 ÷ (0.90 × 7,800) = <strong>$1.41 per loaded mile</strong>. Any month where the average rate slips below that line is a month the truck worked for free.</p>
+      </div>
+
+      <h2>Why deadhead decides your real rate</h2>
+      <p>Deadhead is the part of the job nobody quotes and everybody pays for. Every empty mile carries the same fuel, tyre and maintenance cost as a loaded one, but contributes no revenue. At the numbers above, each empty mile costs about 86 cents in fuel and reserves alone — so the 60 empty miles on the first example quietly consume $52 before the load even starts. On a 500-mile run that is 4 percent of gross revenue thrown away, and on short local runs with a long approach it can be 20 percent or more.</p>
+      <p>The practical consequence is that a higher rate on a distant load is not automatically better. A $3.00-per-mile load with 150 deadhead miles can pay less per total mile than a $2.40 load 10 miles from where you are parked. This calculator puts every mile in the denominator so the comparison is honest. When you are choosing between loads, enter each one and compare net profit per total mile and profit per hour, not the advertised rate.</p>
+
+      <h2>What belongs in cost per mile — and what does not</h2>
+      <ul>
+        <li><strong>Yes:</strong> diesel and DEF, tyres, repairs, preventive maintenance, insurance, truck and trailer payments, permits and IRP, ELD and software, parking, tolls, scales, washouts, small tools and supplies.</li>
+        <li><strong>Yes, as revenue deductions:</strong> broker commissions, dispatch fees, factoring fees, load-board subscriptions. They are not costs of turning a wheel, but they reduce what the wheel earns.</li>
+        <li><strong>Usually yes:</strong> your own pay, if you want the CPM figure to tell you whether the business is viable. An owner-operator who pays themselves nothing is subsidising the truck.</li>
+        <li><strong>No:</strong> income tax, the principal portion of a loan (that is a balance-sheet item, though the interest is a cost), and one-off capital purchases in the year you buy them — spread those over their useful life instead.</li>
+      </ul>
+      <p>Two people with identical trucks can honestly report CPM figures 40 cents apart, purely from what they include. That is fine as long as the figure is consistent: compare your number with your own number over time, and when you compare with someone else, check what is inside theirs first.</p>
+
+      <h2>Frequently asked questions</h2>
+      <details class="faq"><summary>What is a good cost per mile for an owner-operator?</summary>
+        <div class="faq-body"><p>Most tractor-trailer owner-operators land between $1.60 and $2.20 per mile all-in, depending on fuel prices, the truck payment, insurance and monthly miles. A paid-off truck with low fixed costs can sit under $1.50; a new truck with a large payment and high insurance can pass $2.30. Yours is the only one that matters, and it comes from your receipts, not a benchmark table.</p></div>
+      </details>
+      <details class="faq"><summary>Should I divide cost by loaded miles or total miles?</summary>
+        <div class="faq-body"><p>Total miles, for cost per mile. The truck spent the money on every mile it turned. Dividing by loaded miles produces a number that looks better and misleads you at the negotiating table. Keep the per-loaded-mile rate separate: that is the revenue side, and the calculator reports both break-even bases.</p></div>
+      </details>
+      <details class="faq"><summary>How do I work out my maintenance reserve?</summary>
+        <div class="faq-body"><p>Add a full year of repair invoices, tyres, oil changes and preventive service, then divide by the miles the truck ran that year. Most owner-operators find 15 to 25 cents a mile. If you have less than a year of history, start at 20 cents and adjust once you have real numbers. Heavy haul and older equipment sit at the top of the range.</p></div>
+      </details>
+      <details class="faq"><summary>Does the calculator include my own wages?</summary>
+        <div class="faq-body"><p>Only if you put them in. The “fixed &amp; other” line is the place for a driver wage if you employ someone, or for your own draw if you want to see whether the business pays a real wage after the truck is covered. Many owner-operators run the numbers both ways: once with a wage, to price loads, and once without, to see the truck’s own economics.</p></div>
+      </details>
+      <details class="faq"><summary>Why is profit per hour sometimes worse than profit per mile?</summary>
+        <div class="faq-body"><p>Because a high-paying load that takes 14 hours in a dock queue can earn less per hour than a modest one that turns in six. Profit per hour is the better tie-breaker for short runs and local work; profit per mile is the better one for long-haul comparison. The calculator shows both when you enter on-duty hours.</p></div>
+      </details>
+      <details class="faq"><summary>Can I use this for a cargo van or a box truck?</summary>
+        <div class="faq-body"><p>Yes. Set MPG to the van’s real figure, maintenance to 8 to 15 cents a mile, insurance to your actual cost per mile, and leave the per-mile rate mode as it is. The formulas do not care what the vehicle is — only that every cost and every mile is counted.</p></div>
+      </details>
+
+      <h2>Before you book the next load</h2>
+      <p>Run the load through the calculator while the broker is still on the phone. If the net profit per mile is below your break-even, the honest answer is no, however good the headline rate looks. If it is above, you know exactly how much room you have to negotiate a better appointment time, a shorter deadhead or a fuel surcharge. Then update the inputs with your real receipts once a month: fuel prices move, insurance renews, and a maintenance reserve that was right in spring may be too low by winter.</p>
+      <p class="small muted">This calculator provides planning estimates. Rates, fees, fuel prices and reserves vary by carrier, lane and equipment. It is not financial or tax advice. Verify figures against your own settlement statements before committing to a load.</p>
+
+      <div class="related">
+        <a href="/ev-vs-gas/"><strong>EV vs gas fuel cost calculator</strong><small>Compare cost per 100 miles and annual savings</small></a>
+        <a href="/seller-fee/"><strong>Marketplace profit calculator</strong><small>What a sale actually pays after fees</small></a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+        <p>Free calculators for building, selling, driving and gaming. No sign-up, no tracking, no cost.</p>
+      </div>
+      <div>
+        <h4>Calculators</h4>
+        <a href="/concrete/">Concrete slab &amp; bags</a>
+        <a href="/gravel-mulch/">Gravel, mulch &amp; decking</a>
+        <a href="/seller-fee/">Seller profit &amp; fees</a>
+        <a href="/trucking-profit/">Trucking cost per mile</a>
+        <a href="/cobra-vs-aca/">COBRA vs ACA</a>
+        <a href="/ev-vs-gas/">EV vs gas</a>
+        <a href="/edpi/">Mouse sensitivity &amp; eDPI</a>
+      </div>
+      <div>
+        <h4>Site</h4>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacy-policy/">Privacy policy</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> Toolbench. Results are estimates — verify before you buy materials or set a price.</span>
+      <span>Built as a static site.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/calc-trucking.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var T = window.TruckingCalc;
+
+  function money(n) {
+    if (!isFinite(n)) return '—';
+    return (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function fmt(n, d) {
+    if (!isFinite(n)) return '—';
+    return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+  }
+
+  function render() {
+    var r = T.compute({
+      loadedMiles: $('loadedMiles').value,
+      deadheadMiles: $('deadheadMiles').value,
+      rateMode: $('rateMode').value,
+      rate: $('rate').value,
+      brokerPct: $('brokerPct').value,
+      factoringPct: $('factoringPct').value,
+      mpg: $('mpg').value,
+      fuelPrice: $('fuelPrice').value,
+      maintPerMile: $('maintPerMile').value,
+      insPerMile: $('insPerMile').value,
+      fixedCost: $('fixedCost').value,
+      hours: $('hours').value
+    });
+
+    if (r.error) {
+      $('errorNote').hidden = false;
+      $('errorNote').textContent = r.error;
+      return;
+    }
+    $('errorNote').hidden = true;
+
+    $('profitHero').textContent = money(r.netProfit);
+    $('profitHero').style.color = r.netProfit < 0 ? 'var(--bad)' : '';
+    $('profitSub').textContent = money(r.profitPerMile) + ' per mile · ' + fmt(r.marginPct, 1) + '% margin · ' + fmt(r.totalMiles, 0) + ' total miles';
+    $('kvCpm').textContent = money(r.costPerMile);
+    $('kvAllIn').textContent = money(r.allInCostPerMile);
+    $('kvRevenue').textContent = money(r.netRevenue);
+    $('kvHour').textContent = r.hours > 0 ? money(r.profitPerHour) : '—';
+    $('kvHour').title = r.hours > 0 ? 'Net profit divided by ' + fmt(r.hours, 1) + ' hours' : 'Enter hours to see profit per hour';
+
+    var bar = $('costBar');
+    bar.innerHTML = '';
+    var legend = $('costLegend');
+    legend.innerHTML = '';
+    r.segments.forEach(function (s) {
+      if (s.value <= 0.0001) return;
+      var seg = document.createElement('span');
+      seg.style.width = s.pct + '%';
+      seg.style.background = s.color;
+      seg.textContent = s.pct >= 14 ? Math.round(s.pct) + '%' : '';
+      seg.title = s.label + ': ' + money(s.value);
+      bar.appendChild(seg);
+
+      var item = document.createElement('span');
+      item.innerHTML = '<i style="background:' + s.color + '"></i>' + s.label + ' · ' + money(s.value) + ' (' + Math.round(s.centsPerMile) + '¢/mi)';
+      legend.appendChild(item);
+    });
+
+    var rows = [
+      ['Gross revenue', money(r.grossRevenue)],
+      ['Broker fee (' + fmt(r.brokerPct, 1) + '%)', '−' + money(r.grossRevenue * r.brokerPct / 100)],
+      ['Factoring (' + fmt(r.factoringPct, 1) + '%)', '−' + money(r.grossRevenue * r.factoringPct / 100)],
+      ['Net revenue', money(r.netRevenue)],
+      ['Diesel · ' + fmt(r.gallons, 1) + ' gal', '−' + money(r.fuelCost)],
+      ['Maintenance &amp; tires', '−' + money(r.maintCost)],
+      ['Insurance reserve', '−' + money(r.insCost)],
+      ['Fixed &amp; other', '−' + money(r.fixedCost)]
+    ];
+    var html = rows.map(function (x) {
+      return '<div class="breakdown-row"><span>' + x[0] + '</span><span class="v">' + x[1] + '</span></div>';
+    }).join('');
+    html += '<div class="breakdown-row total"><span>Net profit</span><span class="v" style="color:' + (r.netProfit < 0 ? 'var(--bad)' : 'var(--good)') + '">' + money(r.netProfit) + '</span></div>';
+    $('breakdown').innerHTML = html;
+
+    if (r.rateMode === 'flat') {
+      $('beNote').innerHTML = '<strong>Break-even:</strong> ' + money(r.breakEvenRate) + ' per load (the amount left after ' + fmt(r.feePct, 1) + '% fees must cover ' + money(r.totalCost) + ' of running cost).';
+    } else {
+      $('beNote').innerHTML = '<strong>Break-even:</strong> ' + money(r.breakEvenRate) + ' per loaded mile — ' + money(r.breakEvenPerTotalMile) + ' per total mile once deadhead is counted.';
+    }
+    $('dhNote').innerHTML = r.deadheadMiles > 0
+      ? '<strong>Deadhead:</strong> ' + fmt(r.deadheadMiles, 0) + ' empty miles are ' + fmt(r.deadheadPct, 1) + '% of the run and cost about ' + money(r.deadheadCost) + ' in fuel and reserves alone.'
+      : '<strong>Deadhead:</strong> no empty miles entered — every mile on this run earns.';
+  }
+
+  ['loadedMiles', 'deadheadMiles', 'rate', 'brokerPct', 'factoringPct', 'mpg', 'fuelPrice',
+    'maintPerMile', 'insPerMile', 'fixedCost', 'hours'].forEach(function (id) {
+    $(id).addEventListener('input', render);
+  });
+  $('rateMode').addEventListener('change', render);
+
+  render();
+})();
+</script>
+<script src="/assets/js/site.js"></script>
+</body>
+</html>

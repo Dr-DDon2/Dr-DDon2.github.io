@@ -15,7 +15,10 @@ except ImportError:
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 parts = []
-for name, var in [("calc-concrete.js", "ConcreteCalc"), ("calc-seller.js", "SellerCalc"), ("calc-sens.js", "SensCalc")]:
+for name, var in [("calc-concrete.js", "ConcreteCalc"), ("calc-seller.js", "SellerCalc"),
+                  ("calc-sens.js", "SensCalc"), ("calc-trucking.js", "TruckingCalc"),
+                  ("calc-gravel.js", "GravelCalc"), ("calc-cobra.js", "CobraCalc"),
+                  ("calc-ev.js", "EvCalc")]:
     src = (ROOT / "assets/js" / name).read_text(encoding="utf-8")
     parts.append("var module = {exports: {}};\n" + src + f"\nvar {var} = module.exports;\n")
 
@@ -24,7 +27,7 @@ cases = (ROOT / "tests/cases.js").read_text(encoding="utf-8").replace(
 )
 parts.append(cases)
 parts.append("""
-var result = runAll(ConcreteCalc, SellerCalc, SensCalc);
+var result = runAll(ConcreteCalc, SellerCalc, SensCalc, TruckingCalc, GravelCalc, CobraCalc, EvCalc);
 JSON.stringify({pass: result.pass, fails: result.fails});
 """)
 

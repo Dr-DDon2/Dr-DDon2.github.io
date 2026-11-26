@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EV Charging vs Gas Cost Calculator — Annual Fuel Savings</title>
+<meta name="description" content="Compare the fuel cost of an electric car with a petrol car. Enter annual mileage, mi/kWh, home and public charging rates, MPG and gas price to see cost per 100 miles, monthly and annual savings, and the five-year total.">
+<link rel="canonical" href="https://dr-ddon2.github.io/ev-vs-gas/">
+<meta name="theme-color" content="#4f46e5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EV vs Gas Fuel Cost &amp; Annual Savings Calculator">
+<meta property="og:description" content="Cost per 100 miles, annual fuel cost and five-year savings for an EV against a petrol car — with home and fast-charging split out.">
+<meta property="og:url" content="https://dr-ddon2.github.io/ev-vs-gas/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('tb-theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"EV vs Gas Fuel Cost and Savings Calculator","url":"https://dr-ddon2.github.io/ev-vs-gas/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Compare electric vehicle charging costs with gasoline fuel costs: cost per 100 miles, annual and monthly savings, and cumulative savings over several years."}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How much does it cost to charge an EV per mile?","acceptedAnswer":{"@type":"Answer","text":"At home, roughly 3 to 6 cents a mile in the US: a car using 3.5 miles per kWh at 16 cents per kWh costs about 4.6 cents a mile. Public fast charging at 40 to 50 cents per kWh pushes that to 12 to 15 cents a mile, close to a economical petrol car."}},
+{"@type":"Question","name":"What is a good mi/kWh figure for an EV?","acceptedAnswer":{"@type":"Answer","text":"3.5 to 4.5 miles per kWh is typical for a modern efficient car in mixed driving. A large SUV or pickup is nearer 2.0 to 2.8, and cold weather can cut efficiency by 20 to 30 percent on short trips."}},
+{"@type":"Question","name":"Does fast charging cost more than petrol?","acceptedAnswer":{"@type":"Answer","text":"At US fast-charging prices of around 40 to 50 cents per kWh, an EV can cost about the same per mile as a 40 MPG petrol car, and more than a hybrid. Home charging is where the saving lives; the public share of your charging is the single biggest variable in the comparison."}},
+{"@type":"Question","name":"Does this calculator include the cost of buying the car?","acceptedAnswer":{"@type":"Answer","text":"No. It compares fuel and electricity only. Purchase price, depreciation, insurance, tyres, servicing and any tax incentives are separate, and they often matter more than the fuel saving over the first few years."}}]}
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="/#tools" class="nav-hub">All tools</a>
+      <a href="/concrete/" class="nav-tool">Concrete</a>
+      <a href="/seller-fee/" class="nav-tool">Seller fees</a>
+      <a href="/trucking-profit/" class="nav-tool">Trucking</a>
+      <a href="/gravel-mulch/" class="nav-tool">Gravel</a>
+      <a href="/cobra-vs-aca/" class="nav-tool">COBRA/ACA</a>
+      <a href="/ev-vs-gas/" class="nav-tool" aria-current="page">EV/gas</a>
+      <a href="/edpi/" class="nav-tool">eDPI</a>
+      <a href="/about/">About</a>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1111.2 3a6.6 6.6 0 009.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span>EV vs gas calculator</nav>
+      <h1>EV Charging vs Gas: Fuel Cost &amp; Annual Savings</h1>
+      <p>Electricity and petrol are priced in different units, which makes the comparison slippery. Enter both cars and the calculator puts them on the same footing: cost per 100 miles, per month, per year, and over the years you plan to keep the car.</p>
+    </div>
+
+    <div class="tool-layout">
+      <!-- INPUTS -->
+      <section class="panel" aria-labelledby="inputs-h">
+        <h2 id="inputs-h">The two cars</h2>
+        <p class="panel-sub">Use your own electricity tariff and the real pump price near you; both change the answer a lot.</p>
+
+        <div class="field">
+          <label for="annualMiles">Annual mileage</label>
+          <div class="input-group">
+            <input id="annualMiles" type="number" inputmode="decimal" min="0" step="any" value="13500">
+            <select aria-label="Unit" disabled><option>mi / yr</option></select>
+          </div>
+          <p class="hint">The US average is about 13,500 miles a year, or roughly 37 miles a day.</p>
+        </div>
+
+        <h3 style="font-size:.95rem;margin:18px 0 8px">Electric car</h3>
+        <div class="row">
+          <div class="field">
+            <label for="evEff">Efficiency</label>
+            <div class="input-group">
+              <input id="evEff" type="number" inputmode="decimal" min="0" step="any" value="3.5">
+              <select aria-label="Unit" disabled><option>mi / kWh</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="homeShare">Charged at home</label>
+            <div class="input-group">
+              <input id="homeShare" type="number" inputmode="decimal" min="0" max="100" step="1" value="80">
+              <select aria-label="Unit" disabled><option>%</option></select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="homeRate">Home electricity rate</label>
+            <div class="input-group">
+              <select aria-label="Currency" disabled><option>$</option></select>
+              <input id="homeRate" type="number" inputmode="decimal" min="0" step="any" value="0.16">
+              <select aria-label="Unit" disabled><option>/ kWh</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="publicRate">Public fast charging</label>
+            <div class="input-group">
+              <select aria-label="Currency" disabled><option>$</option></select>
+              <input id="publicRate" type="number" inputmode="decimal" min="0" step="any" value="0.45">
+              <select aria-label="Unit" disabled><option>/ kWh</option></select>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="font-size:.95rem;margin:18px 0 8px">Petrol car</h3>
+        <div class="row">
+          <div class="field">
+            <label for="gasMpg">Fuel economy</label>
+            <div class="input-group">
+              <input id="gasMpg" type="number" inputmode="decimal" min="0" step="any" value="30">
+              <select aria-label="Unit" disabled><option>MPG</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="gasPrice">Petrol price</label>
+            <div class="input-group">
+              <select aria-label="Currency" disabled><option>$</option></select>
+              <input id="gasPrice" type="number" inputmode="decimal" min="0" step="any" value="3.60">
+              <select aria-label="Unit" disabled><option>/ gal</option></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="years">Years to compare</label>
+          <div class="input-group">
+            <input id="years" type="number" inputmode="numeric" min="1" max="30" step="1" value="5">
+            <select aria-label="Unit" disabled><option>years</option></select>
+          </div>
+        </div>
+
+        <div class="note">The comparison covers fuel and electricity only. Purchase price, depreciation, insurance, tyres, servicing and incentives are not included.</div>
+      </section>
+
+      <!-- RESULTS -->
+      <section class="panel result-hero results" aria-live="polite" aria-labelledby="result-h">
+        <span class="label" id="result-h">Annual fuel saving</span>
+        <div class="big-number" id="hero">$779</div>
+        <div class="big-sub" id="heroSub">$64.93 a month · 48.1% less than petrol</div>
+
+        <div class="kpi-grid">
+          <div class="kpi"><div class="k-label">EV per year</div><div class="k-value" id="kvEvYear">$841</div></div>
+          <div class="kpi"><div class="k-label">Petrol per year</div><div class="k-value" id="kvGasYear">$1,620</div></div>
+          <div class="kpi"><div class="k-label">EV per 100 miles</div><div class="k-value" id="kvEv100">$6.23</div></div>
+          <div class="kpi"><div class="k-label">Petrol per 100 miles</div><div class="k-value" id="kvGas100">$12.00</div></div>
+        </div>
+
+        <div style="margin-top:22px">
+          <div class="stack-label"><span>Cost per 100 miles</span><span id="per100Note"></span></div>
+          <div class="cmp">
+            <div class="cmp-row">
+              <span class="cmp-label">Electric</span>
+              <div class="cmp-track"><div class="cmp-fill" id="barEv100" style="width:52%;background:#10b981"></div></div>
+              <span class="cmp-val" id="valEv100">$6.23</span>
+            </div>
+            <div class="cmp-row">
+              <span class="cmp-label">Petrol</span>
+              <div class="cmp-track"><div class="cmp-fill" id="barGas100" style="width:100%;background:#f59e0b"></div></div>
+              <span class="cmp-val" id="valGas100">$12.00</span>
+            </div>
+          </div>
+
+          <div class="stack-label" style="margin-top:16px"><span>Cost for a year</span><span id="yearNote"></span></div>
+          <div class="cmp">
+            <div class="cmp-row">
+              <span class="cmp-label">Electric</span>
+              <div class="cmp-track"><div class="cmp-fill" id="barEvYear" style="width:52%;background:#10b981"></div></div>
+              <span class="cmp-val" id="valEvYear">$841</span>
+            </div>
+            <div class="cmp-row">
+              <span class="cmp-label">Petrol</span>
+              <div class="cmp-track"><div class="cmp-fill" id="barGasYear" style="width:100%;background:#f59e0b"></div></div>
+              <span class="cmp-val" id="valGasYear">$1,620</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px">
+          <div class="breakdown">
+            <div class="breakdown-row"><span>Blended electricity rate</span><span class="v" id="rowBlend">$0.218/kWh</span></div>
+            <div class="breakdown-row"><span>Electricity used</span><span class="v" id="rowKwh">3,857 kWh</span></div>
+            <div class="breakdown-row"><span>Home charging cost</span><span class="v" id="rowHome">$493.71</span></div>
+            <div class="breakdown-row"><span>Public charging cost</span><span class="v" id="rowPublic">$347.14</span></div>
+            <div class="breakdown-row"><span>Petrol used</span><span class="v" id="rowGal">450 gal</span></div>
+            <div class="breakdown-row"><span>EV equivalent economy</span><span class="v" id="rowMpge">118 MPGe</span></div>
+            <div class="breakdown-row total"><span>Saving over <span id="yearsLabel">5</span> years</span><span class="v" id="rowTotal">$3,896</span></div>
+          </div>
+        </div>
+
+        <div class="note" id="note"></div>
+        <div class="note" id="errorNote" hidden style="border-left-color:var(--bad)"></div>
+      </section>
+    </div>
+
+    <div class="ad-slot" aria-hidden="true"><!-- reserved ad space, no ad code until the site is approved --></div>
+
+    <!-- LONG FORM CONTENT -->
+    <section class="prose">
+      <h2>Why the comparison needs a common unit</h2>
+      <p>Petrol is sold by the gallon and electricity by the kilowatt-hour, and the two are not remotely the same thing. A gallon of petrol carries roughly 33.7 kilowatt-hours of energy, but a petrol engine throws most of it away as heat: only about a quarter turns into motion at the wheels. An electric motor converts over 85 percent of the electricity it receives into motion, which is why a car using 3.5 miles per kilowatt-hour is doing something a petrol car cannot match on energy alone.</p>
+      <p>That does not automatically mean the EV is cheaper to run. Price is what decides it, and price depends on where the electricity comes from. A kilowatt-hour bought at home overnight can cost a third of one bought at a motorway fast charger. A car that charges 80 percent at home saves a fortune; the same car charged entirely at public stations can cost as much per mile as a frugal petrol hatchback. This calculator splits the two so the answer reflects how you would actually charge.</p>
+
+      <h2>The inputs, and what a realistic value looks like</h2>
+      <p><strong>Annual mileage</strong> is the foundation. Use your own odometer history rather than a national average; a commuter doing 20,000 miles a year gets a very different answer from someone doing 6,000. Everything else is per-mile, so the total scales linearly.</p>
+      <p><strong>Efficiency in miles per kilowatt-hour</strong> is the EV’s version of MPG. Modern efficient cars sit around 3.5 to 4.5 mi/kWh in mixed driving; large SUVs and electric pickups fall to 2.0 to 2.8. Use the car’s lifetime average from the trip computer if you own it, or the US EPA combined figure divided by 33.7 for a car you are considering. Cold weather, motorway speeds and aggressive air-conditioning use can all cut the real figure by 20 percent or more.</p>
+      <p><strong>Home electricity rate</strong> is the marginal price per kilowatt-hour on your bill, including the supply and delivery components you actually pay, not just the headline rate. If your utility offers a time-of-use tariff with cheap overnight hours, use that rate for the home share — it is often half the standard rate, and it is the single easiest way to improve the economics of an EV.</p>
+      <p><strong>Public fast charging</strong> in the US is typically 40 to 60 cents per kilowatt-hour, sometimes with an idle fee and sometimes priced per minute. It is three to four times the home rate, which is why the home-share slider matters so much.</p>
+      <p><strong>Petrol economy and price</strong> need no explanation, but use the real numbers for the car you would otherwise drive. Comparing an EV with a 50 MPG hybrid is a much harder contest than comparing it with a 22 MPG SUV.</p>
+
+      <h2>The formulas</h2>
+      <div class="formula">blended rate ($/kWh) = home rate × home share + public rate × (1 − home share)
+EV cost per mile       = blended rate ÷ miles per kWh
+EV cost per 100 miles  = EV cost per mile × 100
+EV annual cost         = EV cost per mile × annual miles
+petrol cost per mile   = petrol price ÷ MPG
+petrol annual cost     = petrol cost per mile × annual miles
+annual saving          = petrol annual − EV annual
+saving over N years    = annual saving × N
+equivalent economy     = miles per kWh × 33.705   (MPGe)</div>
+      <p>The MPGe figure is the EPA’s way of expressing EV efficiency in petrol terms: the number of miles an EV would travel on the energy in one gallon of petrol. A car at 3.5 mi/kWh comes out at about 118 MPGe. It is a useful sanity check, but do not compare MPGe with MPG as if they were prices — the whole point of the exercise is that the two fuels cost different amounts per unit of energy.</p>
+
+      <h2>Worked example: 13,500 miles, mostly home charging</h2>
+      <div class="example">
+        <div class="ex-head">3.5 mi/kWh, 80% home at $0.16, 20% public at $0.45</div>
+        <p>The blended rate is 0.16 × 0.8 + 0.45 × 0.2 = <strong>$0.218 per kWh</strong>. At 3.5 mi/kWh that is 6.23 cents a mile, or <strong>$6.23 per 100 miles</strong>. Over 13,500 miles the EV uses 3,857 kWh and costs <strong>$840.86</strong> a year.</p>
+        <p>A 30 MPG petrol car at $3.60 a gallon costs 12 cents a mile, or $12.00 per 100 miles, and <strong>$1,620</strong> a year. The saving is <strong>$779</strong> a year, $64.93 a month, and $3,896 over five years — 48 percent less spent on fuel. If the petrol car were a 45 MPG hybrid, the annual saving would fall to roughly $540, which is a much less dramatic number and closer to the truth for many households.</p>
+      </div>
+
+      <h2>Worked example: no home charger</h2>
+      <div class="example">
+        <div class="ex-head">2.8 mi/kWh, 100% public at $0.45, petrol at 22 MPG and $4.00</div>
+        <p>With no home charging the blended rate is simply $0.45, so the EV costs 16.07 cents a mile and <strong>$16.07 per 100 miles</strong>. Over 12,000 miles that is $1,928.57 a year. The petrol car at 22 MPG and $4.00 costs 18.18 cents a mile, $2,181.82 a year. The saving shrinks to <strong>$253</strong> a year, or about $21 a month, and over three years $760.</p>
+        <p>That is still a saving, but it is the same order as tyre wear differences and insurance variations, so the fuel argument alone stops being decisive. Anyone who cannot charge at home should run this version of the numbers before assuming an EV is cheaper to run.</p>
+      </div>
+
+      <h2>Worked example: a high-mileage commuter</h2>
+      <div class="example">
+        <div class="ex-head">20,000 miles, efficient car, cheap overnight power</div>
+        <p>Twenty thousand miles a year at 4.0 mi/kWh, with 90 percent home charging at an overnight rate of $0.10 and 10 percent public at $0.45, gives a blended rate of $0.135 per kWh. The EV cost is 3.375 cents a mile, or <strong>$675 a year</strong>. A 28 MPG petrol car at $3.70 costs 13.2 cents a mile, or $2,642 a year.</p>
+        <p>The saving is <strong>$1,967 a year</strong>, near $10,000 over five years — the case where the EV fuel argument is strongest. High mileage amplifies every cent per mile, and cheap overnight electricity amplifies it again. It is also the case where an EV’s higher purchase price gets paid back fastest, though that calculation needs depreciation and incentives, which this page deliberately leaves out.</p>
+      </div>
+
+      <h2>What the fuel saving does not include</h2>
+      <ul>
+        <li><strong>Purchase price and depreciation.</strong> An EV usually costs more up front and may depreciate differently. A fuel saving of $800 a year does not pay back a $6,000 price difference quickly.</li>
+        <li><strong>Home charger installation.</strong> A Level 2 charger and wiring can run from a few hundred to a couple of thousand dollars, depending on the panel and the run to the garage.</li>
+        <li><strong>Servicing.</strong> EVs have no oil changes, spark plugs or exhaust, and regenerative braking stretches brake life, so routine servicing is usually cheaper. Tyres wear faster because of the weight and torque.</li>
+        <li><strong>Insurance and registration.</strong> Insurance often costs more for an EV because of repair costs, and many states charge extra registration to replace fuel tax.</li>
+        <li><strong>Incentives.</strong> Federal and state credits, utility rebates and manufacturer discounts can be worth thousands, and they are not fuel savings — they are purchase-price reductions.</li>
+      </ul>
+
+      <h2>Frequently asked questions</h2>
+      <details class="faq"><summary>Is charging at home always cheaper than petrol?</summary>
+        <div class="faq-body"><p>In most of the US, yes, by a wide margin: at 16 cents per kWh a 3.5 mi/kWh car runs at about 4.6 cents a mile, well under even a 50 MPG petrol car at current prices. The exceptions are places with very high electricity rates and very cheap petrol, where the gap narrows to almost nothing.</p></div>
+      </details>
+      <details class="faq"><summary>Why does my EV use more kWh than the rating suggests?</summary>
+        <div class="faq-body"><p>Because the rated figure comes from a standardised test. Motorway speeds, cold batteries, heating and air-conditioning, roof racks and short trips that repeatedly warm the cabin all raise consumption. A 20 to 30 percent penalty in winter is normal, and this calculator’s efficiency field is where you put the real, observed number.</p></div>
+      </details>
+      <details class="faq"><summary>Do I need to add charging losses?</summary>
+        <div class="faq-body"><p>Strictly, yes: roughly 10 percent of the electricity drawn from the wall does not reach the battery, and fast charging loses a little more. Most people fold that into a slightly pessimistic mi/kWh figure rather than modelling it separately, which is what the efficiency field here assumes.</p></div>
+      </details>
+      <details class="faq"><summary>How much does a public fast charge cost per mile?</summary>
+        <div class="faq-body"><p>At 45 cents per kWh and 3.5 mi/kWh, about 12.9 cents a mile — roughly the same as a 28 MPG petrol car at $3.60 a gallon. Public charging is convenient for road trips, not a cheap way to run a car day to day.</p></div>
+      </details>
+      <details class="faq"><summary>Does the calculator work for a plug-in hybrid?</summary>
+        <div class="faq-body"><p>Approximately. Enter the electric-only efficiency in mi/kWh and set the home share to the portion of miles you actually drive on electricity; for the petrol side, enter the hybrid’s economy in hybrid mode. The result is a rough blend, not a precise model of how the car splits its power.</p></div>
+      </details>
+      <details class="faq"><summary>What electricity rate should I use if I have solar panels?</summary>
+        <div class="faq-body"><p>Use the value of the electricity you would otherwise export, or the off-peak rate you would pay without solar. If your panels cover the charging entirely, a rate near zero is honest for the fuel comparison — but the panels were not free, so the payback belongs in a different calculation.</p></div>
+      </details>
+
+      <h2>How to use the answer</h2>
+      <p>Enter the rate you actually pay, the efficiency the car actually returns, and the share of charging you can genuinely do at home. Then change one number at a time: drop the home share to zero to see the worst case, raise petrol to a summer price to see the best. If the EV wins in the worst case as well as the best, the fuel argument is settled. If it only wins when everything goes right, the decision belongs to purchase price, charging access and how long you keep the car — which is exactly what this page is not trying to answer.</p>
+      <p class="small muted">Estimates for planning only. Electricity tariffs, petrol prices and real-world efficiency vary by region, season and driving style. Verify against your own bills and the car’s trip computer.</p>
+
+      <div class="related">
+        <a href="/trucking-profit/"><strong>Trucking cost per mile</strong><small>Fuel, reserves and break-even for working vehicles</small></a>
+        <a href="/cobra-vs-aca/"><strong>COBRA vs ACA calculator</strong><small>The other big bill after a job change</small></a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+        <p>Free calculators for building, selling, driving and gaming. No sign-up, no tracking, no cost.</p>
+      </div>
+      <div>
+        <h4>Calculators</h4>
+        <a href="/concrete/">Concrete slab &amp; bags</a>
+        <a href="/gravel-mulch/">Gravel, mulch &amp; decking</a>
+        <a href="/seller-fee/">Seller profit &amp; fees</a>
+        <a href="/trucking-profit/">Trucking cost per mile</a>
+        <a href="/cobra-vs-aca/">COBRA vs ACA</a>
+        <a href="/ev-vs-gas/">EV vs gas</a>
+        <a href="/edpi/">Mouse sensitivity &amp; eDPI</a>
+      </div>
+      <div>
+        <h4>Site</h4>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacy-policy/">Privacy policy</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> Toolbench. Results are estimates — verify before you buy materials or set a price.</span>
+      <span>Built as a static site.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/calc-ev.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var E = window.EvCalc;
+
+  function money(n, d) {
+    if (!isFinite(n)) return '—';
+    var digits = d === undefined ? 0 : d;
+    return (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+  }
+  function fmt(n, d) {
+    if (!isFinite(n)) return '—';
+    return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+  }
+
+  function render() {
+    var r = E.compute({
+      annualMiles: $('annualMiles').value,
+      evMilesPerKwh: $('evEff').value,
+      homeRate: $('homeRate').value,
+      homeSharePct: $('homeShare').value,
+      publicRate: $('publicRate').value,
+      gasMpg: $('gasMpg').value,
+      gasPrice: $('gasPrice').value,
+      years: $('years').value
+    });
+
+    if (r.error) {
+      $('errorNote').hidden = false;
+      $('errorNote').textContent = r.error;
+      return;
+    }
+    $('errorNote').hidden = true;
+
+    var saving = r.annualSavings;
+    $('hero').textContent = (saving < 0 ? '−' : '') + money(Math.abs(saving));
+    $('hero').style.color = saving < 0 ? 'var(--bad)' : '';
+    $('heroSub').textContent = saving >= 0
+      ? money(Math.abs(r.monthlySavings), 2) + ' a month · ' + fmt(Math.abs(r.savingsPct), 1) + '% less than petrol'
+      : money(Math.abs(r.monthlySavings), 2) + ' a month more than petrol · petrol is cheaper per mile';
+
+    $('kvEvYear').textContent = money(r.evAnnualCost);
+    $('kvGasYear').textContent = money(r.gasAnnualCost);
+    $('kvEv100').textContent = money(r.evPer100, 2);
+    $('kvGas100').textContent = money(r.gasPer100, 2);
+
+    $('barEv100').style.width = r.evBarPct + '%';
+    $('barGas100').style.width = r.gasBarPct + '%';
+    $('valEv100').textContent = money(r.evPer100, 2);
+    $('valGas100').textContent = money(r.gasPer100, 2);
+    $('per100Note').textContent = fmt(r.annualMiles, 0) + ' mi/yr';
+
+    var maxYear = Math.max(r.evAnnualCost, r.gasAnnualCost) || 1;
+    $('barEvYear').style.width = (r.evAnnualCost / maxYear * 100) + '%';
+    $('barGasYear').style.width = (r.gasAnnualCost / maxYear * 100) + '%';
+    $('valEvYear').textContent = money(r.evAnnualCost);
+    $('valGasYear').textContent = money(r.gasAnnualCost);
+    $('yearNote').textContent = fmt(r.annualMiles, 0) + ' miles';
+
+    $('rowBlend').textContent = money(r.blendedRate, 3) + '/kWh';
+    $('rowKwh').textContent = fmt(r.evKwhPerYear, 0) + ' kWh';
+    $('rowHome').textContent = money(r.homeCostPerYear, 2);
+    $('rowPublic').textContent = money(r.publicCostPerYear, 2);
+    $('rowGal').textContent = fmt(r.gasGallonsPerYear, 0) + ' gal';
+    $('rowMpge').textContent = fmt(r.evMpge, 0) + ' MPGe';
+    $('rowTotal').textContent = (r.totalSavings < 0 ? '−' : '') + money(Math.abs(r.totalSavings));
+    $('yearsLabel').textContent = fmt(r.years, 0);
+
+    $('note').innerHTML = '<strong>The split matters:</strong> ' + fmt(r.homeSharePct, 0) + '% of charging at ' +
+      money(r.homeRate, 3) + '/kWh and ' + fmt(r.publicSharePct, 0) + '% at ' + money(r.publicRate, 3) +
+      '/kWh blends to ' + money(r.blendedRate, 3) + '/kWh. That is ' + fmt(r.evMpge, 0) +
+      ' MPGe, or the energy of about ' + fmt(r.gallonsEquivalent, 0) + ' gallons of petrol a year.';
+  }
+
+  ['annualMiles', 'evEff', 'homeRate', 'homeShare', 'publicRate', 'gasMpg', 'gasPrice', 'years'].forEach(function (id) {
+    $(id).addEventListener('input', render);
+  });
+
+  render();
+})();
+</script>
+<script src="/assets/js/site.js"></script>
+</body>
+</html>
