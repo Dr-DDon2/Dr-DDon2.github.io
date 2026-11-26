@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twitch Bits, Sub &amp; YouTube Payout Calculator (Net After Tax)</title>
+<meta name="description" content="Free streamer payout calculator for Twitch, YouTube and Kick: turn Bits, subscriptions, Super Chats and memberships into what you actually keep after the platform split, the app-store cut and US tax withholding.">
+<link rel="canonical" href="https://dr-ddon2.github.io/streamer-payout/">
+<meta name="theme-color" content="#4f46e5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Twitch, YouTube &amp; Kick Payout Calculator">
+<meta property="og:description" content="Bits, subs, Super Chats and memberships into net payouts — after the platform split, the 30% app-store cut and withholding.">
+<meta property="og:url" content="https://dr-ddon2.github.io/streamer-payout/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('tb-theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Streamer Payout Calculator","url":"https://dr-ddon2.github.io/streamer-payout/","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Calculate net Twitch, YouTube and Kick payouts from Bits, subscriptions, Super Chats and memberships after platform share, app store fees and tax withholding."}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How much is 1000 Bits worth to a Twitch streamer?","acceptedAnswer":{"@type":"Answer","text":"Ten US dollars. Each Bit pays the streamer one cent, so 1,000 Bits is $10 before any withholding tax. Viewers pay more than that to buy the Bits, but the difference is Twitch's margin, not the streamer's."}},
+{"@type":"Question","name":"Why do subscriptions bought in the mobile app pay less?","acceptedAnswer":{"@type":"Answer","text":"Apple and Google take roughly 30 percent of an in-app purchase before the platform splits what is left with the creator. A $4.99 Tier 1 sub that pays $2.50 on the web pays about $1.75 bought inside the iOS app."}},
+{"@type":"Question","name":"What split does YouTube pay on Super Chats and memberships?","acceptedAnswer":{"@type":"Answer","text":"70 percent to the creator, 30 percent to YouTube. On an in-app iOS purchase the 30 percent store fee comes off first, leaving the creator roughly 49 percent of what the viewer paid."}},
+{"@type":"Question","name":"Does Kick really pay 95 percent?","acceptedAnswer":{"@type":"Answer","text":"Kick advertises a 95/5 split on subscription revenue, which is far above Twitch's 50/50 and YouTube's 70/30. Read the terms for your own account: the promise applies to subscription revenue and the platform has changed details of its program since launch."}},
+{"@type":"Question","name":"Why is tax withheld from my payout?","acceptedAnswer":{"@type":"Answer","text":"The platforms are US companies paying royalties, so a non-US creator is subject to US withholding unless a tax treaty reduces it. The rate depends on your country and the forms you filed, and it appears on your payout statement."}}]}
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="/#tools" class="nav-hub">All tools</a>
+      <details class="nav-tools">
+        <summary>Tools</summary>
+        <div class="nav-tools-panel">
+          <a href="/concrete/">Concrete slab &amp; bags</a>
+          <a href="/gravel-mulch/">Gravel, mulch &amp; decking</a>
+          <a href="/stair-roof/">Stairs &amp; roof pitch</a>
+          <a href="/seller-fee/">Seller profit &amp; fees</a>
+          <a href="/trucking-profit/">Trucking cost per mile</a>
+          <a href="/streamer-payout/" aria-current="page">Streamer payouts</a>
+          <a href="/cobra-vs-aca/">COBRA vs ACA</a>
+          <a href="/ev-vs-gas/">EV vs gas</a>
+          <a href="/battery-runtime/">Battery runtime</a>
+          <a href="/3d-print-cost/">3D print cost</a>
+          <a href="/exif-stripper/">EXIF stripper</a>
+          <a href="/edpi/">Mouse sensitivity</a>
+        </div>
+      </details>
+      <a href="/about/">About</a>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1111.2 3a6.6 6.6 0 009.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span>Streamer payout calculator</nav>
+      <h1>Twitch, YouTube &amp; Kick Payout Calculator</h1>
+      <p>Enter a month of Bits, subscriptions, Super Chats or memberships and see what reaches your bank. The calculator applies the platform split, the app-store cut on mobile purchases and US withholding, then runs the same activity through all three platforms so you can see what the choice is worth.</p>
+    </div>
+
+    <div class="tool-layout">
+      <!-- INPUTS -->
+      <section class="panel" aria-labelledby="sp-inputs-h">
+        <h2 id="sp-inputs-h">This month</h2>
+        <p class="panel-sub">Figures are what the viewers paid, before the platform touches them.</p>
+
+        <div class="field">
+          <span class="label">Platform</span>
+          <div class="segmented" role="radiogroup" aria-label="Platform">
+            <label><input type="radio" name="platform" value="twitch" checked><span>Twitch</span></label>
+            <label><input type="radio" name="platform" value="youtube"><span>YouTube</span></label>
+            <label><input type="radio" name="platform" value="kick"><span>Kick</span></label>
+          </div>
+        </div>
+
+        <div id="twitchFields">
+          <div class="row">
+            <div class="field">
+              <label for="twBits">Bits cheered</label>
+              <div class="input-group">
+                <input id="twBits" type="number" inputmode="numeric" min="0" step="1" value="5000">
+                <select aria-label="Bits unit" disabled><option>Bits</option></select>
+              </div>
+              <p class="hint">1,000 Bits = $10 to you.</p>
+            </div>
+            <div class="field">
+              <label for="twT1">Tier 1 subs</label>
+              <div class="input-group">
+                <input id="twT1" type="number" inputmode="numeric" min="0" step="1" value="100">
+                <select aria-label="Tier 1 unit" disabled><option>× $4.99</option></select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="twT2">Tier 2 subs</label>
+              <div class="input-group">
+                <input id="twT2" type="number" inputmode="numeric" min="0" step="1" value="0">
+                <select aria-label="Tier 2 unit" disabled><option>× $9.99</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="twT3">Tier 3 subs</label>
+              <div class="input-group">
+                <input id="twT3" type="number" inputmode="numeric" min="0" step="1" value="0">
+                <select aria-label="Tier 3 unit" disabled><option>× $24.99</option></select>
+              </div>
+            </div>
+          </div>
+          <label class="check"><input id="twPartner" type="checkbox"> <span>Partner Plus split (70/30 instead of 50/50)</span></label>
+          <label class="check"><input id="twInApp" type="checkbox"> <span>Paid inside the mobile app (30% store fee on subs)</span></label>
+          <div class="note">Partner Plus raises the creator share of net subscription revenue. Twitch has revised the program more than once, so confirm the rate that applies to your account in the dashboard before you budget on it.</div>
+        </div>
+
+        <div id="youtubeFields" hidden>
+          <div class="field">
+            <label for="ytSuper">Super Chats &amp; Super Thanks</label>
+            <div class="input-group">
+              <select aria-label="Currency" disabled style="border-radius:10px 0 0 10px"><option>$</option></select>
+              <input id="ytSuper" type="number" inputmode="decimal" min="0" step="0.01" value="500" style="border-radius:0 10px 10px 0">
+            </div>
+            <p class="hint">Total the viewers paid, before YouTube's 30%.</p>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="ytMembers">Members</label>
+              <div class="input-group">
+                <input id="ytMembers" type="number" inputmode="numeric" min="0" step="1" value="120">
+                <select aria-label="Members unit" disabled><option>people</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="ytPrice">Membership price</label>
+              <div class="input-group">
+                <select aria-label="Currency" disabled style="border-radius:10px 0 0 10px"><option>$</option></select>
+                <input id="ytPrice" type="number" inputmode="decimal" min="0" step="0.01" value="4.99" style="border-radius:0 10px 10px 0">
+              </div>
+            </div>
+          </div>
+          <label class="check"><input id="ytInApp" type="checkbox"> <span>Paid inside the iOS or Android app (30% store fee first)</span></label>
+        </div>
+
+        <div id="kickFields" hidden>
+          <div class="row">
+            <div class="field">
+              <label for="kkT1">Tier 1 subs</label>
+              <div class="input-group">
+                <input id="kkT1" type="number" inputmode="numeric" min="0" step="1" value="100">
+                <select aria-label="Tier 1 unit" disabled><option>× $4.99</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="kkT2">Tier 2 subs</label>
+              <div class="input-group">
+                <input id="kkT2" type="number" inputmode="numeric" min="0" step="1" value="0">
+                <select aria-label="Tier 2 unit" disabled><option>× $9.99</option></select>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="kkT3">Tier 3 subs</label>
+            <div class="input-group">
+              <input id="kkT3" type="number" inputmode="numeric" min="0" step="1" value="0">
+              <select aria-label="Tier 3 unit" disabled><option>× $24.99</option></select>
+            </div>
+          </div>
+          <label class="check"><input id="kkInApp" type="checkbox"> <span>Paid inside a mobile app (30% store fee first)</span></label>
+        </div>
+
+        <div class="field" style="margin-top:16px">
+          <label for="tax">US withholding on your payout</label>
+          <select id="tax">
+            <option value="0">0% — US person, or treaty rate of zero</option>
+            <option value="15">15% — reduced treaty rate</option>
+            <option value="30" selected>30% — no treaty benefit claimed</option>
+          </select>
+          <p class="hint">Use the rate printed on your payout statement. It depends on your country and your tax forms, not on the platform.</p>
+        </div>
+
+        <div class="note"><strong>What is not counted:</strong> ad revenue, donations outside the platform, sponsorships and merchandise. This page is only about money the platform collects on your behalf.</div>
+      </section>
+
+      <!-- RESULTS -->
+      <section class="panel result-hero results" aria-live="polite" aria-labelledby="sp-result-h">
+        <span class="label" id="sp-result-h">You keep</span>
+        <div class="big-number" id="netHero">—</div>
+        <div class="big-sub" id="netSub">of a gross month</div>
+
+        <div class="kpi-grid">
+          <div class="kpi"><div class="k-label">Viewers paid</div><div class="k-value" id="kvGross">—</div></div>
+          <div class="kpi"><div class="k-label">Before tax</div><div class="k-value" id="kvCreator">—</div></div>
+          <div class="kpi"><div class="k-label">Platform + store</div><div class="k-value" id="kvCut">—</div></div>
+          <div class="kpi"><div class="k-label">Withheld</div><div class="k-value" id="kvTax">—</div></div>
+        </div>
+
+        <div style="margin-top:20px">
+          <div class="stackbar" id="stackBar" role="img" aria-label="Where the viewers' money goes"></div>
+          <div class="legend">
+            <span><i style="background:#4f46e5"></i>You</span>
+            <span><i style="background:#a5b4fc"></i>Withholding</span>
+            <span><i style="background:#cbd5e1"></i>Platform &amp; store</span>
+          </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <div class="breakdown" id="lineRows"></div>
+        </div>
+
+        <h2 style="margin-top:22px">Same month, three platforms</h2>
+        <div class="cmp" id="cmpBox"></div>
+        <div class="note" id="cmpNote">The Twitch figure includes Bits, which have no equivalent on the other two platforms.</div>
+        <div class="note" id="spError" hidden style="border-left-color:var(--bad)"></div>
+      </section>
+    </div>
+
+    <div class="ad-slot" aria-hidden="true"><!-- reserved ad space, no ad code until the site is approved --></div>
+
+    <section class="prose">
+      <h2>Why a streamer needs a payout calculator</h2>
+      <p>A channel that “makes $4.99 a sub” is a channel that has not read its own dashboard. Between the price a viewer pays and the money that arrives, three separate parties take a cut, and each of them takes it in a different order. The platform takes its share of the subscription. The app store takes its 30 percent first if the viewer subscribed on a phone. Then the tax authority takes its share of what is left, because the platform paying you is a US company. The order matters: a 30 percent fee applied before a 50/50 split costs half of what the same fee applied after would.</p>
+      <p>This page puts those three steps in the right order for each of the three big streaming platforms, shows every line, and then runs the same activity through all of them so the comparison is honest. It does not include ad revenue, tips outside the platform, sponsorships or merch, because none of those pass through the same machinery.</p>
+
+      <h2>How each platform pays</h2>
+      <h3>Twitch</h3>
+      <p><strong>Bits</strong> are the simplest money on the internet: one Bit pays the streamer one cent, so 5,000 Bits is $50. Viewers buy Bits at a markup, especially in the mobile app, and that markup is Twitch's revenue, not something taken from you.</p>
+      <p><strong>Subscriptions</strong> are a share of the net subscription price: $4.99, $9.99 and $24.99 at Tier 1, 2 and 3, split 50/50 by default. Partner Plus raises the creator share; Twitch has changed the mechanics of that program since it launched, so the checkbox here models the 70/30 version and the dashboard is the authority on your own rate. A subscription bought inside the mobile app is a different story: Apple or Google takes about 30 percent off the top before the split, which is why the same Tier 1 sub pays roughly $1.75 instead of $2.50.</p>
+      <h3>YouTube</h3>
+      <p>Super Chats, Super Thanks and channel memberships pay the creator 70 percent. The membership price is set per channel, so the calculator lets you enter it rather than assuming $4.99. On iOS, in-app purchases are processed by Apple, which takes its 30 percent first — the widely reported result is that a creator keeps around 49 cents of every dollar spent in the app, and the calculator reproduces that: 30 percent store fee, then 30 percent to YouTube.</p>
+      <h3>Kick</h3>
+      <p>Kick's selling point is a 95/5 split on subscription revenue, which is dramatically better than either competitor. The same 100 Tier 1 subscribers that pay $249.50 on Twitch pay $474.05 on Kick. Whether that advantage survives depends on audience size, not arithmetic: a platform with a tenth of the viewers is not a better deal because the percentage is higher.</p>
+
+      <h2>Tax withholding, in one paragraph</h2>
+      <p>All three platforms are US companies, and the money they pay for subscriptions, Bits and Super Chats is treated as a royalty. A creator who is not a US person is subject to US withholding at the statutory rate unless a tax treaty between their country and the United States reduces it, which requires filing the right form — a W-8BEN for an individual, a W-8BEN-E for a company. A treaty rate of zero is common, 15 percent appears in many treaties, and 30 percent applies where no benefit is claimed. This is not a platform fee and it is not lost forever: a US tax return can often recover it, which is a question for an accountant rather than a calculator. Use the rate your statement shows.</p>
+
+      <h2>Worked example: a Twitch month with 5,000 Bits and 100 Tier 1 subs</h2>
+      <div class="example">
+        <div class="ex-head">The default numbers on this page</div>
+        <p>5,000 Bits pay $50. One hundred Tier 1 subs at $4.99 gross $499, and at 50/50 the creator's share is $249.50. The month's creator revenue is $299.50 before tax, on $549 that viewers paid — a 54.6 percent take.</p>
+        <p>Now switch the same month to Partner Plus: the sub share becomes $349.30 and the total $399.30. Switch on the mobile-app checkbox instead and the sub share falls to $174.65, a $74.85 loss on 100 subs that is easy to miss because nothing on the stream changes. Apply 30 percent withholding on the original figure and $209.65 arrives.</p>
+      </div>
+
+      <h2>Worked example: YouTube Super Chats on the web versus iOS</h2>
+      <div class="example">
+        <div class="ex-head">Same generosity, two checkouts</div>        <p>$500 of Super Chats plus 120 members at $4.99 is $1,098.80 of gross revenue. YouTube keeps 30 percent, so the creator gets $769.16 on the web. Through the iOS app, Apple's 30 percent comes off first and YouTube takes 30 percent of what remains: $538.41. Half the money, from an audience that gave exactly the same amount.</p>
+        <p>That is why so many creators point at the web checkout in chat. The viewer pays the same either way; the difference is entirely in who else gets paid.</p>
+      </div>
+
+      <h2>Worked example: the Kick comparison</h2>
+      <div class="example">
+        <div class="ex-head">100 subs and 10 Tier 2s</div>
+        <p>On Kick, 100 Tier 1 subs ($499) and 10 Tier 2 subs ($99.90) gross $598.90, and the 95 percent split pays $568.96. The same subscription mix on Twitch pays $299.45, and on YouTube as memberships at the same prices it pays $419.23. The gap is real and it is the whole reason Kick exists.</p>
+        <p>What the calculator cannot show is the other half of the decision: what a subscriber is worth on a platform with fewer viewers, what the payout threshold and schedule are, and whether the audience will follow. Treat the comparison as the ceiling of what the split is worth, not a forecast.</p>
+      </div>
+
+      <h2>Reading your payout statement</h2>
+      <p>Payout schedules differ and change, so treat these as shapes rather than promises: Twitch accumulates a balance and pays out monthly once it passes a minimum, with a longer tail for the first payment; YouTube pays through AdSense once the balance clears $100; Kick advertises faster, more frequent payouts. The number that matters is the net in your bank, and the statement breaks it into gross revenue, platform share, any store fees and withholding. If a line does not match this calculator, the statement is right and the assumptions here are wrong — the most common cause is a subscription price that differs by region, because Twitch and YouTube price subs in local currency and the dollar equivalent moves.</p>
+
+      <h2>Frequently asked questions</h2>
+      <details class="faq"><summary>How much is 1,000 Bits worth?</summary>
+        <div class="faq-body"><p>$10 to the streamer, one cent per Bit, before withholding. A viewer typically pays $12 to $15 for those Bits depending on how they bought them and in which country. Bits exist only on Twitch, so in the cross-platform comparison only the Twitch bar includes them.</p></div>
+      </details>
+      <details class="faq"><summary>Why does a Tier 1 sub pay $2.50 and not $4.99?</summary>
+        <div class="faq-body"><p>Because Twitch keeps half of the net subscription price. On the web that is 50 percent of $4.99, so $2.495. On a phone the store fee comes first: $4.99 less 30 percent is $3.49, half of which is about $1.75. Partner Plus changes the split, not the store fee.</p></div>
+      </details>
+      <details class="faq"><summary>Do I pay tax twice if my country also taxes the income?</summary>
+        <div class="faq-body"><p>Not twice on the same money, in principle. US withholding is creditable against the tax you owe at home under most treaties, so you declare the gross foreign income and claim the withheld amount as a credit. Keep the annual tax summary the platform issues. This is general information, not tax advice for your situation.</p></div>
+      </details>
+      <details class="faq"><summary>Is it better to ask viewers to subscribe on the web?</summary>
+        <div class="faq-body"><p>For you, yes: the same $4.99 pays about 43 percent more when the store is not involved. For the viewer it is the same price and one extra step, which is why many creators put the link in the stream description rather than arguing about it on air.</p></div>
+      </details>
+      <details class="faq"><summary>What about gifted subs and Prime subs?</summary>
+        <div class="faq-body"><p>Gifted subs pay the same share as a normal sub of that tier. Prime subs are a Twitch-specific product that pays the streamer roughly the same as a Tier 1 sub even though the viewer pays through their Prime membership. Enter them as Tier 1 subs; the difference is a couple of cents.</p></div>
+      </details>
+      <details class="faq"><summary>Does this calculator include ad revenue?</summary>
+        <div class="faq-body"><p>No. Ad revenue is a separate CPM-based calculation that depends on impressions, region and the ad fill rate, and it is reported separately on every platform. Add it yourself if you want a full picture of a month.</p></div>
+      </details>
+
+      <h2>Before you count the money</h2>
+      <p>Use last month's real numbers rather than a projection — the payout statement has every figure this page asks for. Then run the same month through the other platforms: the difference between a 50 percent and a 95 percent split is large enough that it should be a deliberate choice rather than an accident of where the audience happened to gather. Finally, keep the withholding rate current. It is set by forms you filed once, and a treaty rate that expired or a form that was never submitted quietly takes a third of every payout.</p>
+      <p class="small muted">This calculator provides estimates for planning. Platform splits, store fees, subscription prices and withholding rates change, and they vary by region and account. Verify against your own payout statement and the current platform terms.</p>
+
+      <div class="related">
+        <a href="/seller-fee/"><strong>Etsy &amp; TikTok Shop profit calculator</strong><small>The same fee arithmetic for physical products</small></a>
+        <a href="/edpi/"><strong>Mouse sensitivity converter</strong><small>Move your aim between games</small></a>
+        <a href="/3d-print-cost/"><strong>3D print cost calculator</strong><small>Price the props and stands you sell to viewers</small></a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+        <p>Free calculators for building, selling, driving and gaming. No sign-up, no tracking, no cost.</p>
+      </div>
+      <div>
+        <h4>Calculators</h4>
+        <a href="/concrete/">Concrete slab &amp; bags</a>
+        <a href="/gravel-mulch/">Gravel, mulch &amp; decking</a>
+        <a href="/stair-roof/">Stairs &amp; roof pitch</a>
+        <a href="/seller-fee/">Seller profit &amp; fees</a>
+        <a href="/trucking-profit/">Trucking cost per mile</a>
+        <a href="/streamer-payout/">Twitch, YouTube &amp; Kick payouts</a>
+        <a href="/cobra-vs-aca/">COBRA vs ACA</a>
+        <a href="/ev-vs-gas/">EV vs gas</a>
+        <a href="/battery-runtime/">Battery runtime</a>
+        <a href="/3d-print-cost/">3D print cost &amp; AMS waste</a>
+        <a href="/exif-stripper/">EXIF &amp; metadata stripper</a>
+        <a href="/edpi/">Mouse sensitivity &amp; eDPI</a>
+      </div>
+      <div>
+        <h4>Site</h4>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacy-policy/">Privacy policy</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> Toolbench. Results are estimates — verify before you buy materials or set a price.</span>
+      <span>Built as a static site.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/calc-streamer.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var S = window.StreamerCalc;
+
+  function money(n) {
+    if (!isFinite(n)) return '—';
+    return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function platform() {
+    var el = document.querySelector('input[name="platform"]:checked');
+    return el ? el.value : 'twitch';
+  }
+  function inApp() {
+    var p = platform();
+    return p === 'twitch' ? $('twInApp').checked : p === 'youtube' ? $('ytInApp').checked : $('kkInApp').checked;
+  }
+
+  function render() {
+    var p = platform();
+    $('twitchFields').hidden = p !== 'twitch';
+    $('youtubeFields').hidden = p !== 'youtube';
+    $('kickFields').hidden = p !== 'kick';
+
+    var args = {
+      platform: p,
+      bits: $('twBits').value,
+      tier1: p === 'kick' ? $('kkT1').value : $('twT1').value,
+      tier2: p === 'kick' ? $('kkT2').value : $('twT2').value,
+      tier3: p === 'kick' ? $('kkT3').value : $('twT3').value,
+      superChatGross: $('ytSuper').value,
+      memberships: $('ytMembers').value,
+      memberPrice: $('ytPrice').value,
+      partnerPlus: $('twPartner').checked,
+      inApp: inApp(),
+      taxRatePct: $('tax').value
+    };
+
+    var r = S.compute(args);
+    if (r.error) {
+      $('spError').hidden = false;
+      $('spError').textContent = r.error;
+      $('netHero').textContent = '—';
+      $('netSub').textContent = r.error;
+      $('lineRows').textContent = '';
+      $('cmpBox').textContent = '';
+      $('stackBar').innerHTML = '';
+      return;
+    }
+    $('spError').hidden = true;
+
+    $('netHero').textContent = money(r.net);
+    $('netSub').textContent = 'of ' + money(r.grossTotal) + ' paid by viewers · ' + (r.takeOfGross * 100).toFixed(1) + '% of gross';
+
+    $('kvGross').textContent = money(r.grossTotal);
+    $('kvCreator').textContent = money(r.creatorTotal);
+    $('kvCut').textContent = money(r.platformTotal + r.storeTotal);
+    $('kvTax').textContent = money(r.tax);
+
+    var youPct = r.grossTotal > 0 ? (r.net / r.grossTotal) * 100 : 0;
+    var taxPct = r.grossTotal > 0 ? (r.tax / r.grossTotal) * 100 : 0;
+    var cutPct = 100 - youPct - taxPct;
+    $('stackBar').innerHTML =
+      '<span style="width:' + youPct + '%;background:#4f46e5">' + (youPct >= 12 ? youPct.toFixed(0) + '%' : '') + '</span>' +
+      '<span style="width:' + taxPct + '%;background:#a5b4fc;color:#1e1b4b">' + (taxPct >= 12 ? taxPct.toFixed(0) + '%' : '') + '</span>' +
+      '<span style="width:' + cutPct + '%;background:#cbd5e1;color:#334155">' + (cutPct >= 12 ? cutPct.toFixed(0) + '%' : '') + '</span>';
+
+    var rows = '';
+    r.lines.forEach(function (l) {
+      rows += '<div class="breakdown-row"><span>' + l.label + ' <span class="muted">' + money(l.gross) + ' paid</span></span>' +
+        '<span class="v">' + money(l.creator) + '</span></div>';
+    });
+    if (r.storeTotal > 0) rows += '<div class="breakdown-row"><span>App store fee</span><span class="v">−' + money(r.storeTotal) + '</span></div>';
+    rows += '<div class="breakdown-row"><span>Platform share</span><span class="v">−' + money(r.platformTotal) + '</span></div>';
+    rows += '<div class="breakdown-row"><span>Withholding at ' + r.taxPct.toFixed(0) + '%</span><span class="v">−' + money(r.tax) + '</span></div>';
+    rows += '<div class="breakdown-row total"><span>Net payout</span><span class="v">' + money(r.net) + '</span></div>';
+    $('lineRows').innerHTML = rows;
+
+    var cmp = S.compare({
+      bits: $('twBits').value,
+      tier1: p === 'kick' ? $('kkT1').value : $('twT1').value,
+      tier2: p === 'kick' ? $('kkT2').value : $('twT2').value,
+      tier3: p === 'kick' ? $('kkT3').value : $('twT3').value,
+      superChatGross: $('ytSuper').value,
+      memberships: $('ytMembers').value,
+      memberPrice: $('ytPrice').value,
+      partnerPlus: $('twPartner').checked,
+      inApp: inApp(),
+      taxRatePct: $('tax').value
+    });
+    var max = Math.max.apply(null, cmp.rows.map(function (x) { return x.net; }).concat([0.01]));
+    var html = '';
+    cmp.rows.forEach(function (row) {
+      var pct = Math.max(2, (row.net / max) * 100);
+      var bg = row.key === cmp.best ? '#4f46e5' : '#a5b4fc';
+      html += '<div class="cmp-row"><span class="cmp-label">' + row.label + '</span>' +
+        '<span class="cmp-track"><span class="cmp-fill" style="width:' + pct + '%;background:' + bg + '"></span></span>' +
+        '<span class="cmp-val">' + (row.ok ? money(row.net) : '—') + '</span></div>';
+    });
+    $('cmpBox').innerHTML = html;
+  }
+
+  document.querySelectorAll('input[name="platform"]').forEach(function (el) { el.addEventListener('change', render); });
+  ['twBits', 'twT1', 'twT2', 'twT3', 'ytSuper', 'ytMembers', 'ytPrice', 'kkT1', 'kkT2', 'kkT3'].forEach(function (id) {
+    $(id).addEventListener('input', render);
+  });
+  ['twPartner', 'twInApp', 'ytInApp', 'kkInApp'].forEach(function (id) {
+    $(id).addEventListener('change', render);
+  });
+  $('tax').addEventListener('change', render);
+
+  render();
+})();
+</script>
+<script src="/assets/js/site.js"></script>
+</body>
+</html>

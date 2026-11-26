@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stair Stringer &amp; Roof Pitch Calculator (Riser, Tread, IRC Check)</title>
+<meta name="description" content="Free stair calculator: turn a total rise into riser height, tread depth, total run, stringer length and angle, checked against IRC R311.7 limits. The same page converts roof pitch (X:12) into degrees, slope percent and common and hip-valley rafter lengths.">
+<link rel="canonical" href="https://dr-ddon2.github.io/stair-roof/">
+<meta name="theme-color" content="#4f46e5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stair Stringer &amp; Roof Pitch Calculator">
+<meta property="og:description" content="Riser height, tread depth, stringer length and an IRC code check — plus roof pitch in degrees with common and hip rafter multipliers.">
+<meta property="og:url" content="https://dr-ddon2.github.io/stair-roof/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('tb-theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Stair Stringer & Roof Pitch Calculator","url":"https://dr-ddon2.github.io/stair-roof/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Convert a total rise into risers, riser height, treads, stringer length and angle with an IRC R311.7 code check, and convert roof pitch into degrees, slope and rafter lengths."}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How many stairs do I need for a 9 foot rise?","acceptedAnswer":{"@type":"Answer","text":"With a 7.5 inch target riser, 108 inches divided by 7.5 is 14.4, so 14 risers at 7 3/4 inches each. That gives 13 treads and a total run of 136.5 inches at a 10.5 inch tread."}},
+{"@type":"Question","name":"What is the maximum riser height allowed by code?","acceptedAnswer":{"@type":"Answer","text":"The IRC caps riser height at 7-3/4 inches (196 mm) for a residential stairway, with a maximum 3/8 inch difference between the tallest and shortest riser in a flight."}},
+{"@type":"Question","name":"How long is a stair stringer for a 9 foot rise?","acceptedAnswer":{"@type":"Answer","text":"For a 108 inch rise and a 136.5 inch run the diagonal is about 174 inches, or 14 ft 6 in. Buy 16 foot stock because you need extra length for the plumb cuts at the top and bottom."}},
+{"@type":"Question","name":"What does a 6:12 roof pitch mean?","acceptedAnswer":{"@type":"Answer","text":"It rises 6 inches for every 12 inches of horizontal run, which is 26.57 degrees and a 50 percent slope. A common rafter needs 1.1180 feet of length per foot of run."}},
+{"@type":"Question","name":"How do I find the angle of a roof pitch?","acceptedAnswer":{"@type":"Answer","text":"Angle = arctan(rise / 12). A 4:12 pitch is 18.43 degrees, 6:12 is 26.57 degrees, 9:12 is 36.87 degrees and 12:12 is 45 degrees."}},
+{"@type":"Question","name":"How much does a stair calculator allow for the stringer cuts?","acceptedAnswer":{"@type":"Answer","text":"This page reports the true diagonal plus 12 inches of stock for the plumb cuts where the stringer meets the landing and the bottom plate. Cutting from a longer board is always cheaper than a short stringer."}}]}
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="/#tools" class="nav-hub">All tools</a>
+      <details class="nav-tools">
+        <summary>Tools</summary>
+        <div class="nav-tools-panel">
+          <a href="/concrete/">Concrete slab &amp; bags</a>
+          <a href="/gravel-mulch/">Gravel, mulch &amp; decking</a>
+          <a href="/stair-roof/" aria-current="page">Stairs &amp; roof pitch</a>
+          <a href="/seller-fee/">Seller profit &amp; fees</a>
+          <a href="/trucking-profit/">Trucking cost per mile</a>
+          <a href="/streamer-payout/">Streamer payouts</a>
+          <a href="/cobra-vs-aca/">COBRA vs ACA</a>
+          <a href="/ev-vs-gas/">EV vs gas</a>
+          <a href="/battery-runtime/">Battery runtime</a>
+          <a href="/3d-print-cost/">3D print cost</a>
+          <a href="/exif-stripper/">EXIF stripper</a>
+          <a href="/edpi/">Mouse sensitivity</a>
+        </div>
+      </details>
+      <a href="/about/">About</a>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1111.2 3a6.6 6.6 0 009.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span>Stair stringer &amp; roof pitch</nav>
+      <h1>Stair Stringer &amp; Roof Pitch Calculator</h1>
+      <p>Enter the total rise and get the number of risers, the exact riser height, tread count, total run, stringer length and the stair angle — with a pass or fail against the IRC R311.7 residential limits. Below it, the same page turns a roof pitch into degrees, slope percent and common and hip-valley rafter lengths.</p>
+    </div>
+
+    <div class="tool-layout">
+      <!-- STAIR INPUTS -->
+      <section class="panel" aria-labelledby="stair-inputs-h">
+        <h2 id="stair-inputs-h">Stair dimensions</h2>
+        <p class="panel-sub">Work from the finished floor to the finished floor. Every field updates the result instantly.</p>
+
+        <div class="field">
+          <label for="rise">Total rise <span class="muted">(floor to floor)</span></label>
+          <div class="input-group">
+            <input id="rise" type="number" inputmode="decimal" min="0" step="any" value="9">
+            <select id="riseUnit" aria-label="Rise unit">
+              <option value="ftin" selected>ft</option>
+              <option value="in">in</option>
+              <option value="mm">mm</option>
+            </select>
+          </div>
+          <div id="riseInWrap" style="margin-top:8px">
+            <div class="input-group">
+              <input id="riseIn" type="number" inputmode="decimal" min="0" max="11" step="any" value="0" aria-label="Additional inches">
+              <select id="riseSx" aria-label="Additional sixteenths">
+                <option value="0" selected>0</option>
+                <option value="1">+ 1/16</option>
+                <option value="2">+ 1/8</option>
+                <option value="3">+ 3/16</option>
+                <option value="4">+ 1/4</option>
+                <option value="5">+ 5/16</option>
+                <option value="6">+ 3/8</option>
+                <option value="7">+ 7/16</option>
+                <option value="8">+ 1/2</option>
+                <option value="9">+ 9/16</option>
+                <option value="10">+ 5/8</option>
+                <option value="11">+ 11/16</option>
+                <option value="12">+ 3/4</option>
+                <option value="13">+ 13/16</option>
+                <option value="14">+ 7/8</option>
+                <option value="15">+ 15/16</option>
+              </select>
+            </div>
+          </div>
+          <p class="hint">Switch the unit to inches or millimetres and enter one number. Fractions are available down to 1/16 in.</p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="target">Target riser</label>
+            <div class="input-group">
+              <input id="target" type="number" inputmode="decimal" min="4" max="7.75" step="0.125" value="7.5">
+              <select aria-label="Target riser unit" disabled><option>in</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="tread">Tread depth</label>
+            <div class="input-group">
+              <input id="tread" type="number" inputmode="decimal" min="6" max="16" step="0.125" value="10.5">
+              <select aria-label="Tread unit" disabled><option>in</option></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="nosing">Nosing projection</label>
+            <div class="input-group">
+              <input id="nosing" type="number" inputmode="decimal" min="0" max="2" step="0.125" value="1">
+              <select aria-label="Nosing unit" disabled><option>in</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="width">Stair width</label>
+            <div class="input-group">
+              <input id="width" type="number" inputmode="decimal" min="12" max="96" step="0.5" value="36">
+              <select aria-label="Width unit" disabled><option>in</option></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="note">
+          <strong>How the riser count is chosen:</strong> the pack is rounded to the nearest whole number of risers for your target, then the rise is divided evenly so every step matches. Raising the target above 7-3/4 in is ignored, because the calculator will not plan a stair that fails the IRC limit it checks.
+        </div>
+      </section>
+
+      <!-- STAIR RESULTS -->
+      <section class="panel result-hero results" aria-live="polite" aria-labelledby="stair-result-h">
+        <span class="label" id="stair-result-h">Build this stair</span>
+        <div class="big-number" id="riserHero">14 risers</div>
+        <div class="big-sub" id="riserSub">at 7 3/4 in each, 13 treads</div>
+        <div id="codeBadges" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px"></div>
+
+        <div class="kpi-grid">
+          <div class="kpi"><div class="k-label">Riser height</div><div class="k-value" id="kvRiser">7 3/4 <small>in</small></div></div>
+          <div class="kpi"><div class="k-label">Tread depth</div><div class="k-value" id="kvTread">10 1/2 <small>in</small></div></div>
+          <div class="kpi"><div class="k-label">Total run</div><div class="k-value" id="kvRun">11.38 <small>ft</small></div></div>
+          <div class="kpi"><div class="k-label">Stringer</div><div class="k-value" id="kvStringer">14.51 <small>ft</small></div></div>
+        </div>
+
+        <div style="margin-top:20px">
+          <div class="breakdown">
+            <div class="breakdown-row"><span>Number of risers</span><span class="v" id="rowRisers">14</span></div>
+            <div class="breakdown-row"><span>Number of treads</span><span class="v" id="rowTreads">13</span></div>
+            <div class="breakdown-row"><span>Total run</span><span class="v" id="rowRun">136 1/2 in (11 ft 4 1/2 in)</span></div>
+            <div class="breakdown-row"><span>Stringer diagonal</span><span class="v" id="rowDiag">174 1/16 in</span></div>
+            <div class="breakdown-row"><span>Stock to buy</span><span class="v" id="rowStock">15 ft 6 in</span></div>
+            <div class="breakdown-row total"><span>Stair angle</span><span class="v" id="rowAngle">38.35°</span></div>
+          </div>
+        </div>
+
+        <h2 style="margin-top:22px">Code check</h2>
+        <table class="data" id="codeTable">
+          <thead><tr><th>Check</th><th>Value</th><th>Limit</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr data-check="riser"><td>Riser height</td><td id="tcRiser">7.75 in</td><td>≤ 7.75 in</td><td id="tsRiser">pass</td></tr>
+            <tr data-check="tread"><td>Tread depth</td><td id="tcTread">10.5 in</td><td>≥ 10 in</td><td id="tsTread">pass</td></tr>
+            <tr data-check="width"><td>Stair width</td><td id="tcWidth">36 in</td><td>≥ 36 in</td><td id="tsWidth">pass</td></tr>
+            <tr data-check="nosing"><td>Nosing</td><td id="tcNosing">1 in</td><td>3/4–1 1/4 in</td><td id="tsNosing">pass</td></tr>
+          </tbody>
+        </table>
+        <div class="note" id="stairNote"><strong>Stringer stock:</strong> the diagonal plus 12 in for the plumb cuts. A 2×12 is 11 1/4 in wide, which is the real limit on how deep a cut you can make in one board.</div>
+        <div class="note" id="stairError" hidden style="border-left-color:var(--bad)"></div>
+      </section>
+    </div>
+
+    <div class="tool-layout">
+      <!-- ROOF INPUTS -->
+      <section class="panel" aria-labelledby="roof-inputs-h">
+        <h2 id="roof-inputs-h">Roof pitch</h2>
+        <p class="panel-sub">Pitch is rise per 12 in of horizontal run. The run is measured plumb under the ridge to the outside of the wall.</p>
+
+        <div class="row">
+          <div class="field">
+            <label for="pitch">Pitch</label>
+            <div class="input-group">
+              <input id="pitch" type="number" inputmode="decimal" min="0.25" max="24" step="0.25" value="6">
+              <select aria-label="Pitch unit" disabled><option>:12</option></select>
+            </div>
+            <p class="hint">Common values: 4:12 walkable, 6:12 standard, 9:12 steep, 12:12 45°.</p>
+          </div>
+          <div class="field">
+            <label for="roofRun">Horizontal run</label>
+            <div class="input-group">
+              <input id="roofRun" type="number" inputmode="decimal" min="0" step="any" value="12">
+              <select aria-label="Run unit" disabled><option>ft</option></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="overhang">Eave overhang</label>
+          <div class="input-group">
+            <input id="overhang" type="number" inputmode="decimal" min="0" step="any" value="1.5">
+            <select aria-label="Overhang unit" disabled><option>ft</option></select>
+          </div>
+          <p class="hint">Added to the rafter run, so the cut length includes the tail past the wall.</p>
+        </div>
+
+        <div class="note"><strong>What the multipliers are:</strong> the length a rafter needs for one foot of horizontal run. Common rafters use √(144 + pitch²) ÷ 12; hip and valley rafters use √(288 + pitch²) ÷ 12, because they travel diagonally across the plan.</div>
+      </section>
+
+      <!-- ROOF RESULTS -->
+      <section class="panel results" aria-live="polite" aria-labelledby="roof-result-h">
+        <span class="label" id="roof-result-h">Roof</span>
+        <div class="big-number" id="angleHero">26.57°</div>
+        <div class="big-sub" id="angleSub">6:12 pitch · 50% slope</div>
+
+        <div class="kpi-grid">
+          <div class="kpi"><div class="k-label">Rise over the run</div><div class="k-value" id="kvRise">6.00 <small>ft</small></div></div>
+          <div class="kpi"><div class="k-label">Common rafter</div><div class="k-value" id="kvCommon">15.09 <small>ft</small></div></div>
+          <div class="kpi"><div class="k-label">Hip / valley rafter</div><div class="k-value" id="kvHip">20.25 <small>ft</small></div></div>
+          <div class="kpi"><div class="k-label">Cut angle</div><div class="k-value" id="kvAngle">26.57 <small>°</small></div></div>
+        </div>
+
+        <div style="margin-top:20px">
+          <div class="breakdown">
+            <div class="breakdown-row"><span>Common rafter multiplier</span><span class="v" id="rowCommonMult">1.1180 per ft</span></div>
+            <div class="breakdown-row"><span>Hip / valley multiplier</span><span class="v" id="rowHipMult">1.5000 per ft</span></div>
+            <div class="breakdown-row"><span>Rafter run (with overhang)</span><span class="v" id="rowRafterRun">13.50 ft</span></div>
+            <div class="breakdown-row"><span>Common rafter length</span><span class="v" id="rowCommonLen">15.09 ft</span></div>
+            <div class="breakdown-row"><span>Hip / valley length</span><span class="v" id="rowHipLen">20.25 ft</span></div>
+            <div class="breakdown-row total"><span>Total rise including the tail</span><span class="v" id="rowTotalRise">6.75 ft</span></div>
+          </div>
+        </div>
+
+        <h2 style="margin-top:22px">Multipliers at a glance</h2>
+        <table class="data" id="pitchTable">
+          <thead><tr><th>Pitch</th><th>Angle</th><th>Common</th><th>Hip</th></tr></thead>
+          <tbody>
+            <tr data-p="3"><td>3:12</td><td>14.04°</td><td>1.0308</td><td>1.4361</td></tr>
+            <tr data-p="4"><td>4:12</td><td>18.43°</td><td>1.0541</td><td>1.4530</td></tr>
+            <tr data-p="6"><td>6:12</td><td>26.57°</td><td>1.1180</td><td>1.5000</td></tr>
+            <tr data-p="8"><td>8:12</td><td>33.69°</td><td>1.2019</td><td>1.5635</td></tr>
+            <tr data-p="10"><td>10:12</td><td>39.81°</td><td>1.3017</td><td>1.6415</td></tr>
+            <tr data-p="12"><td>12:12</td><td>45.00°</td><td>1.4142</td><td>1.7321</td></tr>
+          </tbody>
+        </table>
+        <div class="note" id="roofError" hidden style="border-left-color:var(--bad)"></div>
+      </section>
+    </div>
+
+    <div class="ad-slot" aria-hidden="true"><!-- reserved ad space, no ad code until the site is approved --></div>
+
+    <section class="prose">
+      <h2>What this page calculates</h2>
+      <p>Two of the most common framing problems are the same problem wearing different clothes: you know the vertical distance and you need the number of pieces, the size of each piece and the length of the diagonal that carries them. On a stair that diagonal is the stringer. On a roof it is the rafter. Both are solved with the same right triangle, and both are easy to get wrong by an eighth of an inch that turns into a visible error at the top of the flight or the end of the ridge.</p>
+      <p>The stair half of this page works from a single measurement — the total rise from the finished lower floor to the finished upper floor. From that it picks the number of risers, divides the rise evenly, works out how many treads that leaves, multiplies the tread depth by the tread count to get the total run, and takes the diagonal to give the stringer length. It then compares the result against the residential stair limits in the International Residential Code, section R311.7, and tells you which limit, if any, the design breaks.</p>
+      <p>The roof half converts a pitch written the way carpenters write it — so many inches of rise for every 12 inches of horizontal run — into the numbers a square, a level and a saw actually use: the angle in degrees, the slope as a percentage, and the multipliers that give rafter lengths for any run.</p>
+
+      <h2>The stair formulas, line by line</h2>
+      <p>Nothing here is a rule of thumb hiding a fudge factor. Each output is a single line of arithmetic, and you can run all of it on a calculator to check the page.</p>
+      <div class="formula">risers        = round(total rise ÷ target riser)          minimum 2
+riser height  = total rise ÷ risers
+treads        = risers − 1
+total run     = treads × tread depth
+stringer      = √(total rise² + total run²)
+stair angle   = atan(total rise ÷ total run)
+stock length  = stringer + 12 in  (plumb cuts at both ends)</div>
+      <p>The riser count is the only place a choice is made, and the choice is rounding. A 108 inch rise with a 7.5 inch target gives 14.4, which rounds to 14 risers, so each riser is 108 ÷ 14 = 7.714 inches. Rounding up to 15 would give 7.2 inch risers — legal, but a shallower, longer stair that often will not fit the space. Rounding down to 13 would give 8.3 inch risers, which breaks the code limit, so the calculator would tell you.</p>
+      <p>Note that a stair with 14 risers has 13 treads. The top riser lands on the upper floor, and the upper floor is a tread you do not build. That off-by-one is the most common error in a hand-drawn stair plan, and it is worth checking against the total run: 13 treads at 10.5 inches is 136.5 inches of horizontal travel, which for a 108 inch rise is a 38.35 degree stair — steep but normal for a deck or a basement.</p>
+
+      <h2>The code limits this page checks</h2>
+      <p>The 2021 International Residential Code sets the following for a residential stairway. Commercial work follows the International Building Code, which is stricter about some of these and adds requirements the IRC does not have, so a shop or an office stair needs a different check.</p>
+      <ul>
+        <li><strong>Riser height, R311.7.5.1:</strong> maximum 7-3/4 inches (196 mm). There is no minimum in the code, but anything under about 4 inches reads as a trip hazard in practice.</li>
+        <li><strong>Tread depth, R311.7.5.2:</strong> minimum 10 inches (254 mm) measured horizontally between the nosings of adjacent treads.</li>
+        <li><strong>Uniformity, R311.7.5:</strong> the largest riser in a flight may be no more than 3/8 inch taller than the smallest. Dividing the total rise evenly is the simplest way to satisfy this, and it is why the calculator does it that way.</li>
+        <li><strong>Stairway width, R311.7.1:</strong> minimum 36 inches of clear width above the handrail height.</li>
+        <li><strong>Nosing, R311.7.5.3:</strong> where the tread is less than 11 inches deep, the nosing projects between 3/4 inch and 1-1/4 inches past the riser below it, with a radius no sharper than 9/16 inch.</li>
+        <li><strong>Headroom, R311.7.5:</strong> 6 ft 8 in measured vertically from the nosing line. A stair that passes under a floor joist, a beam or the upper landing is where this fails, and no calculator can see it for you.</li>
+        <li><strong>Handrail, R311.7.8:</strong> required on at least one side of a stair with four or more risers, 34 to 38 inches above the nosing line.</li>
+      </ul>
+      <p>A pass on all four checks in the table is a necessary condition, not a permit. Landing size, guard height, the slope of the ground at the bottom and the door swing at the top are all outside what a two-number calculator can know.</p>
+
+      <h2>Worked example: a 9 ft deck stair</h2>
+      <div class="example">
+        <div class="ex-head">Deck at 108 inches above grade</div>
+        <p>Total rise 108 in, target riser 7.5 in. 108 ÷ 7.5 = 14.4, so 14 risers at exactly 7-3/4 in — right at the code limit but not over it. 13 treads at 10.5 in give a total run of 136.5 in, or 11 ft 4-1/2 in of horizontal travel.</p>
+        <p>The stringer is √(108² + 136.5²) = √(11,664 + 18,632.25) = 174.06 in, which is 14 ft 6 in. Add a foot for the plumb cuts and buy 15 ft 6 in — in practice a 16 ft 2×12, because lumber yards sell in even lengths. The stair angle is atan(108 ÷ 136.5) = 38.35°, which is a comfortable outdoor stair, not a ladder and not a ramp.</p>
+        <p>Because the tread is 10.5 in, the nosing rule applies and a 1 in projection is correct. Two stringers carry the width if the stair is under about 3 ft; at 36 in clear width, three stringers at 16 in centres is the safer framing for a deck stair that will see a crowd.</p>
+      </div>
+
+      <h2>Worked example: a metric stair to a mezzanine</h2>
+      <div class="example">
+        <div class="ex-head">2,500 mm rise, working in millimetres</div>
+        <p>Switch the unit to mm and enter 2,500. That is 98.43 in. Divided by a 7.5 in target, 2,500 mm ÷ 190.5 mm = 13.12, so 13 risers at 192.3 mm each — under the 196 mm limit. 12 treads at 267 mm (10.5 in) give a 3,200 mm run and a 4,058 mm stringer, and the angle is 38.0°.</p>
+        <p>Metric lumber is usually sold as 45 × 250 mm for a stringer, which gives 250 mm of depth for the tread-and-riser cut. A 267 mm tread plus a 192 mm riser is 459 mm of cut across the board — far more than 250 mm — so the stringer must be cut with the tread cantilevered, or the stair built with a housed-stringer design instead of a notched one. This is where a metric build diverges from the American pattern: check the actual board before trusting the cut list.</p>
+      </div>
+
+      <h2>Worked example: a 6:12 gable roof</h2>
+      <div class="example">
+        <div class="ex-head">10 ft run, 1.5 ft overhang</div>
+        <p>A 6:12 pitch rises 6 inches per foot of run, so the angle is atan(6 ÷ 12) = 26.57° and the slope is 50 percent. The common rafter multiplier is √(144 + 36) ÷ 12 = 1.1180, and the hip multiplier is √(288 + 36) ÷ 12 = 1.5000.</p>
+        <p>With a 10 ft run and a 1.5 ft overhang, the rafter run is 11.5 ft. The common rafter is 11.5 × 1.1180 = 12.86 ft, and the same run on the diagonal is 11.5 × 1.5000 = 17.25 ft for a hip or valley. The rise over the wall line is 10 × 0.5 = 5 ft; over the full rafter run, including the tail, it is 5.75 ft.</p>
+        <p>Rafters are bought in even lengths and cut with a ridge reduction, so a 12.86 ft rafter comes out of a 14 ft board with the plumb and birdsmouth cuts allowed for. If the roof is a hip, the 17.25 ft hip rafter needs a 20 ft board, and the 45° plan angle means the hip sits √2 times as far across the plan as a common rafter travels — which is exactly what the larger multiplier already accounts for.</p>
+      </div>
+
+      <h2>Why the rafter multipliers look the way they do</h2>
+      <p>Every multiplier is the hypotenuse of a right triangle whose legs are 12 inches of run and the pitch in inches of rise. For a 6:12 roof that is √(12² + 6²) = 13.416 inches of rafter for every 12 inches of run; divide by 12 and you get 1.118. The hip and valley multiplier uses √(12² + 12² + pitch²) instead, because a hip travels diagonally across the plan: it covers 12 inches of run in one direction and 12 in the other while climbing the same pitch. That is where the 288 comes from — 144 + 144.</p>
+      <p>These are the numbers printed on the little blue card that comes with a framing square, and they have not changed in a century because the geometry has not changed. The table on this page lists six of the most common pitches so you can sanity-check a roof before committing to a cut list, and the inputs above will do any pitch from 1:12 to 24:12.</p>
+
+      <h2>Frequently asked questions</h2>
+      <details class="faq"><summary>How many stairs do I need for a 9 foot rise?</summary>
+        <div class="faq-body"><p>Fourteen risers at 7-3/4 inches each, with 13 treads. That works out of 108 ÷ 7.5 = 14.4 rounded to 14. If you prefer a shallower stair with a 7 inch riser, you get 108 ÷ 7 = 15.4, so 15 risers at 7.2 inches and 14 treads — a longer stair by about a foot of run.</p></div>
+      </details>
+      <details class="faq"><summary>Can I use a 2×10 for a stringer?</summary>
+        <div class="faq-body"><p>Usually not. A 2×10 is 9-1/4 inches wide, and the deeper the tread and the taller the riser, the more of that width the notch removes. A normal stair with a 10 inch tread and a 7-1/2 inch riser wants the full 11-1/4 inches of a 2×12. Shallow, long stairs over a low rise can sometimes be cut from a 2×10 — the number that decides it is the throat, the wood left under the notches, not the outside dimension of the board.</p></div>
+      </details>
+      <details class="faq"><summary>What is the throat of a stair stringer and why does it matter?</summary>
+        <div class="faq-body"><p>The throat is the wood left between the inside corner of the notch and the far edge of the board, measured perpendicular to the slope: the narrowest cross-section the stringer has under the steps. The code does not set a number, but 3-1/2 inches is the accepted minimum for a 2×12 and many framers will not go below 5. A short throat is where stringers crack, so check it on the first stringer before using it as a template.</p></div>
+      </details>
+      <details class="faq"><summary>Is a 38 degree stair too steep?</summary>
+        <div class="faq-body"><p>It is a normal residential stair. The familiar comfortable range is roughly 30 to 37 degrees, and a 7-3/4 inch riser with a 10 inch tread lands at about 37.8 degrees. Steeper than 40 degrees starts to feel like a ship's ladder, and the code limit on riser height with a 10 inch minimum tread caps the practical maximum at about 37.8 degrees for a legal IRC stair.</p></div>
+      </details>
+      <details class="faq"><summary>How do I measure the total rise?</summary>
+        <div class="faq-body"><p>From the finished surface at the bottom to the finished surface at the top — not from the subfloor, and not from the ground if there will be a landing or a slab poured there later. A 1 inch error in the total rise is spread across every riser, so it changes each step by less than a tenth of an inch, but it changes the top step by the whole inch, which is the one people trip on.</p></div>
+      </details>
+      <details class="faq"><summary>Does pitch mean the same thing as slope?</summary>
+        <div class="faq-body"><p>In roofing, yes in spirit but not in units. Pitch is rise over 12 of run, written 6:12. Slope is the same relationship as a percentage, so a 6:12 is a 50 percent slope. An angle in degrees is what a saw or a digital level reads. All three describe one triangle, which is why this page shows all three for every pitch you enter — and why a roof quoted as "26.57 degrees" and "6:12" is the same roof.</p></div>
+      </details>
+
+      <h2>Before you cut</h2>
+      <p>Write the total rise and total run on the board before you mark anything, and mark the first stringer as a template for the rest — every stringer in a flight has to be identical, and the only reliable way to guarantee that is to cut one and trace it. Check the notch depth against the actual width of the board you bought rather than its nominal size, because a 2×12 is 11-1/4 inches and the difference is what decides whether the stringer survives its first winter. For a roof, mark the pitch on the rafter with a square and confirm the first two rafters sit at the same height at the ridge before cutting the rest of the set.</p>
+      <p class="small muted">This calculator provides estimates for planning. Local amendments, commercial codes and the actual board you buy can all change the answer. Verify against the code your inspector enforces and measure the real materials before cutting.</p>
+
+      <div class="related">
+        <a href="/concrete/"><strong>Concrete slab &amp; bag estimator</strong><small>The footing or the landing slab under the stair</small></a>
+        <a href="/gravel-mulch/"><strong>Gravel, mulch &amp; decking estimator</strong><small>Deck boards, joists and the base under the posts</small></a>
+        <a href="/3d-print-cost/"><strong>3D print cost calculator</strong><small>Price a bracket or a jig you printed instead of bought</small></a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+        <p>Free calculators for building, selling, driving and gaming. No sign-up, no tracking, no cost.</p>
+      </div>
+      <div>
+        <h4>Calculators</h4>
+        <a href="/concrete/">Concrete slab &amp; bags</a>
+        <a href="/gravel-mulch/">Gravel, mulch &amp; decking</a>
+        <a href="/stair-roof/">Stairs &amp; roof pitch</a>
+        <a href="/seller-fee/">Seller profit &amp; fees</a>
+        <a href="/trucking-profit/">Trucking cost per mile</a>
+        <a href="/streamer-payout/">Twitch, YouTube &amp; Kick payouts</a>
+        <a href="/cobra-vs-aca/">COBRA vs ACA</a>
+        <a href="/ev-vs-gas/">EV vs gas</a>
+        <a href="/battery-runtime/">Battery runtime</a>
+        <a href="/3d-print-cost/">3D print cost &amp; AMS waste</a>
+        <a href="/exif-stripper/">EXIF &amp; metadata stripper</a>
+        <a href="/edpi/">Mouse sensitivity &amp; eDPI</a>
+      </div>
+      <div>
+        <h4>Site</h4>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacy-policy/">Privacy policy</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> Toolbench. Results are estimates — verify before you buy materials or set a price.</span>
+      <span>Built as a static site.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/calc-stair.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var S = window.StairCalc;
+
+  function fmt(n, d) {
+    if (!isFinite(n)) return '—';
+    return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+  }
+  function fi(inches) { return S.toInchFrac(inches); }
+
+  function badge(ok, label) {
+    var s = document.createElement('span');
+    s.className = 'pill ' + (ok ? 'ok' : 'bad');
+    s.textContent = (ok ? '✓ ' : '✗ ') + label;
+    return s;
+  }
+
+  function renderStairs() {
+    var r = S.computeStairs({
+      rise: $('rise').value,
+      riseUnit: $('riseUnit').value,
+      riseInches: $('riseIn').value,
+      riseSixteenths: $('riseSx').value,
+      targetRiserIn: $('target').value,
+      treadDepthIn: $('tread').value,
+      nosingIn: $('nosing').value,
+      widthIn: $('width').value
+    });
+
+    $('riseInWrap').hidden = $('riseUnit').value !== 'ftin';
+
+    if (r.error) {
+      $('stairError').hidden = false;
+      $('stairError').textContent = r.error;
+      $('riserHero').textContent = '—';
+      $('riserSub').textContent = r.error;
+      $('codeBadges').textContent = '';
+      return;
+    }
+    $('stairError').hidden = true;
+
+    $('riserHero').textContent = r.risers + ' risers';
+    $('riserSub').textContent = 'at ' + fi(r.riserIn) + ' in each · ' + r.treads + ' treads · ' + fmt(r.totalRiseIn, 2) + ' in total rise';
+
+    var badges = $('codeBadges');
+    badges.textContent = '';
+    badges.appendChild(badge(r.riserOk, 'Riser ' + (r.riserOk ? 'within 7 3/4 in' : 'over 7 3/4 in')));
+    badges.appendChild(badge(r.treadOk, 'Tread ' + (r.treadOk ? 'at least 10 in' : 'under 10 in')));
+    badges.appendChild(badge(r.widthOk, 'Width ' + (r.widthOk ? 'at least 36 in' : 'under 36 in')));
+
+    $('kvRiser').innerHTML = fi(r.riserIn) + ' <small>in</small>';
+    $('kvTread').innerHTML = fi(r.treadIn) + ' <small>in</small>';
+    $('kvRun').innerHTML = fmt(r.runFt, 2) + ' <small>ft</small>';
+    $('kvStringer').innerHTML = fmt(r.stringerFt, 2) + ' <small>ft</small>';
+
+    $('rowRisers').textContent = String(r.risers);
+    $('rowTreads').textContent = String(r.treads);
+    $('rowRun').textContent = fmt(r.runIn, 2) + ' in (' + S.toFeetInches(r.runIn) + ')';
+    $('rowDiag').textContent = fmt(r.stringerIn, 2) + ' in (' + S.toFeetInches(r.stringerIn) + ')';
+    $('rowStock').textContent = S.toFeetInches(r.stringerOrderIn) + ' · ' + fmt(r.stringerMm, 0) + ' mm';    $('rowAngle').textContent = fmt(r.angleDeg, 2) + '°';
+
+    $('tcRiser').textContent = fmt(r.riserIn, 3) + ' in';
+    $('tsRiser').textContent = r.riserOk ? 'pass' : 'fail';
+    $('tsRiser').className = r.riserOk ? 'ok-cell' : 'bad-cell';
+    $('tcTread').textContent = fmt(r.treadIn, 2) + ' in';
+    $('tsTread').textContent = r.treadOk ? 'pass' : 'fail';
+    $('tsTread').className = r.treadOk ? 'ok-cell' : 'bad-cell';
+    $('tcWidth').textContent = fmt(r.widthIn, 0) + ' in';
+    $('tsWidth').textContent = r.widthOk ? 'pass' : 'fail';
+    $('tsWidth').className = r.widthOk ? 'ok-cell' : 'bad-cell';
+    $('tcNosing').textContent = fmt(r.nosingIn, 3) + ' in';
+    $('tsNosing').textContent = r.nosingApplies ? (r.nosingOk ? 'pass' : 'fail') : 'n/a';
+    $('tsNosing').className = !r.nosingApplies ? '' : (r.nosingOk ? 'ok-cell' : 'bad-cell');
+
+    var note = '<strong>Stringer stock:</strong> ' + S.toFeetInches(r.stringerOrderIn) +
+      ' (' + fmt(r.stringerOrderIn, 0) + ' in) — the diagonal plus 12 in for the plumb cuts. ';
+    note += 'Cut it from a straight 2×12 and check the throat — the wood left under the notches — before you cut: 3 1/2 in is the usual minimum, 5 in is safer.';
+    $('stairNote').innerHTML = note;
+  }
+
+  function renderRoof() {
+    var r = S.computeRoof({ pitch: $('pitch').value, runFt: $('roofRun').value, overhangFt: $('overhang').value });
+    if (r.error) {
+      $('roofError').hidden = false;
+      $('roofError').textContent = r.error;
+      $('angleHero').textContent = '—';
+      return;
+    }
+    $('roofError').hidden = true;
+
+    $('angleHero').textContent = fmt(r.angleDeg, 2) + '°';
+    $('angleSub').textContent = r.pitchText + ' pitch · ' + fmt(r.slopePct, 1) + '% slope';
+    $('kvRise').innerHTML = fmt(r.riseFt, 2) + ' <small>ft</small>';
+    $('kvCommon').innerHTML = fmt(r.commonRafterFt, 2) + ' <small>ft</small>';
+    $('kvHip').innerHTML = fmt(r.hipRafterFt, 2) + ' <small>ft</small>';
+    $('kvAngle').innerHTML = fmt(r.angleDeg, 2) + ' <small>°</small>';
+
+    $('rowCommonMult').textContent = fmt(r.commonMult, 4) + ' per ft';
+    $('rowHipMult').textContent = fmt(r.hipMult, 4) + ' per ft';
+    $('rowRafterRun').textContent = fmt(r.rafterRunFt, 2) + ' ft';
+    $('rowCommonLen').textContent = fmt(r.commonRafterFt, 2) + ' ft';
+    $('rowHipLen').textContent = fmt(r.hipRafterFt, 2) + ' ft';
+    $('rowTotalRise').textContent = fmt(r.totalRiseFt, 2) + ' ft';
+
+    document.querySelectorAll('#pitchTable tbody tr').forEach(function (tr) {
+      var p = parseFloat(tr.getAttribute('data-p'));
+      var row = S.computeRoof({ pitch: p, runFt: 1, overhangFt: 0 });
+      if (row.error) return;
+      tr.children[1].textContent = fmt(row.angleDeg, 2) + '°';
+      tr.children[2].textContent = fmt(row.commonMult, 4);
+      tr.children[3].textContent = fmt(row.hipMult, 4);
+      tr.classList.toggle('is-active', Math.abs(p - r.pitch) < 0.25);
+    });
+  }
+
+  ['rise', 'riseIn', 'target', 'tread', 'nosing', 'width'].forEach(function (id) {
+    $(id).addEventListener('input', renderStairs);
+  });
+  $('riseSx').addEventListener('change', renderStairs);
+  /* Keep the physical rise when the unit selector changes, so 9 ft never
+     silently becomes 9 mm. */
+  $('riseUnit').addEventListener('change', function () {
+    var unit = $('riseUnit').value;
+    var inches = S.toInches($('rise').value, $('riseUnit').getAttribute('data-prev') || 'ftin', $('riseIn').value, $('riseSx').value);
+    if (isFinite(inches) && inches > 0) {
+      if (unit === 'in') $('rise').value = +inches.toFixed(2);
+      else if (unit === 'mm') $('rise').value = +(inches * 25.4).toFixed(0);
+      else { $('rise').value = Math.floor(inches / 12); $('riseIn').value = +(inches - Math.floor(inches / 12) * 12).toFixed(2); }
+    }
+    $('riseUnit').setAttribute('data-prev', unit);
+    renderStairs();
+  });
+  $('riseUnit').setAttribute('data-prev', 'ftin');
+  ['pitch', 'roofRun', 'overhang'].forEach(function (id) {
+    $(id).addEventListener('input', renderRoof);
+  });
+
+  renderStairs();
+  renderRoof();
+})();
+</script>
+<script src="/assets/js/site.js"></script>
+</body>
+</html>

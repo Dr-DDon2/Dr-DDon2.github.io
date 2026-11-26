@@ -49,6 +49,36 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://dr-ddon2.github.io/stair-roof/</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://dr-ddon2.github.io/battery-runtime/</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://dr-ddon2.github.io/streamer-payout/</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://dr-ddon2.github.io/3d-print-cost/</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://dr-ddon2.github.io/exif-stripper/</loc>
+    <lastmod>2026-11-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://dr-ddon2.github.io/about/</loc>
     <lastmod>2026-11-26</lastmod>
     <changefreq>yearly</changefreq>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UPS &amp; Solar Battery Runtime Calculator (LiFePO4 vs Lead-Acid)</title>
+<meta name="description" content="Free battery runtime calculator: add up your loads in watts, enter the pack voltage and Ah or Wh, pick the chemistry, and get the real runtime after depth of discharge, inverter losses and Peukert correction — plus a LiFePO4 versus lead-acid comparison.">
+<link rel="canonical" href="https://dr-ddon2.github.io/battery-runtime/">
+<meta name="theme-color" content="#4f46e5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UPS &amp; Solar Battery Runtime Calculator">
+<meta property="og:description" content="How long will the battery actually last? Runtime after depth of discharge, inverter efficiency and Peukert, with a LiFePO4 versus lead-acid comparison.">
+<meta property="og:url" content="https://dr-ddon2.github.io/battery-runtime/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('tb-theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"UPS & Solar Battery Runtime Calculator","url":"https://dr-ddon2.github.io/battery-runtime/","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Calculate battery runtime from load watts, pack voltage and Ah or Wh, with depth of discharge by chemistry, inverter efficiency and Peukert correction."}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How long will a 100Ah battery run a 100W load?","acceptedAnswer":{"@type":"Answer","text":"A 100Ah 12V LiFePO4 pack runs about 9 hours 43 minutes at 100W through a 90 percent efficient inverter. The same nameplate capacity in AGM lead-acid lasts roughly 4 hours 55 minutes, because only half the capacity is usable and Peukert losses bite at that current."}},
+{"@type":"Question","name":"What depth of discharge should I use?","acceptedAnswer":{"@type":"Answer","text":"90 percent for LiFePO4, 80 percent for lithium-ion NMC, and 50 percent for AGM, gel or flooded lead-acid if you want the battery to reach its rated cycle life."}},
+{"@type":"Question","name":"Why is the runtime shorter than Ah divided by amps?","acceptedAnswer":{"@type":"Answer","text":"Three losses: depth of discharge (you cannot use the whole pack), inverter efficiency (typically 85 to 90 percent), and the Peukert effect in lead-acid, which reduces usable capacity as the discharge current rises."}},
+{"@type":"Question","name":"How many Ah do I need for 24 hours of backup?","acceptedAnswer":{"@type":"Answer","text":"Divide the load watts by the battery voltage and the inverter efficiency to get amps, multiply by the hours you need, then divide by the usable depth of discharge. A 100W load on 12V at 90 percent efficiency needs 82Ah of LiFePO4 for eight hours."}},
+{"@type":"Question","name":"Does inverter idle draw matter?","acceptedAnswer":{"@type":"Answer","text":"Yes. A 1000W inverter often draws 10 to 20W doing nothing, which is 240 to 480Wh a day — a fifth of a small battery pack before any real load."}}]}
+</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="/#tools" class="nav-hub">All tools</a>
+      <details class="nav-tools">
+        <summary>Tools</summary>
+        <div class="nav-tools-panel">
+          <a href="/concrete/">Concrete slab &amp; bags</a>
+          <a href="/gravel-mulch/">Gravel, mulch &amp; decking</a>
+          <a href="/stair-roof/">Stairs &amp; roof pitch</a>
+          <a href="/seller-fee/">Seller profit &amp; fees</a>
+          <a href="/trucking-profit/">Trucking cost per mile</a>
+          <a href="/streamer-payout/">Streamer payouts</a>
+          <a href="/cobra-vs-aca/">COBRA vs ACA</a>
+          <a href="/ev-vs-gas/">EV vs gas</a>
+          <a href="/battery-runtime/" aria-current="page">Battery runtime</a>
+          <a href="/3d-print-cost/">3D print cost</a>
+          <a href="/exif-stripper/">EXIF stripper</a>
+          <a href="/edpi/">Mouse sensitivity</a>
+        </div>
+      </details>
+      <a href="/about/">About</a>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1111.2 3a6.6 6.6 0 009.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="page-head">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span>Battery runtime calculator</nav>
+      <h1>UPS &amp; Solar Battery Runtime Calculator</h1>
+      <p>Tick the equipment you want to keep running, enter the pack you have, and this page returns the real runtime — after the depth of discharge the chemistry allows, the inverter's losses and, for lead-acid, the Peukert penalty at your actual discharge current. The same pack is shown in LiFePO4 and lead-acid so the difference is visible.</p>
+    </div>
+
+    <div class="tool-layout">
+      <!-- LOADS AND BATTERY -->
+      <section class="panel" aria-labelledby="batt-inputs-h">
+        <h2 id="batt-inputs-h">What is it running?</h2>
+        <p class="panel-sub">Tick the loads. Watts are running draw, not the number on a startup surge.</p>
+
+        <div id="presets" style="display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;margin-bottom:12px">
+          <label class="check"><input type="checkbox" data-w="12" data-name="Router"> <span>Wi-Fi router <span class="muted">12 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="8" data-name="ONT"> <span>Fibre ONT / modem <span class="muted">8 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="35" data-name="NAS"> <span>NAS, 2 bays <span class="muted">35 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="200" data-name="Desktop"> <span>Desktop PC <span class="muted">200 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="60" data-name="Laptop"> <span>Laptop <span class="muted">60 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="45" data-name="NVR"> <span>NVR + 2 cameras <span class="muted">45 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="40" data-name="CPAP"> <span>CPAP, no humidifier <span class="muted">40 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="45" data-name="Camping fridge"> <span>12V fridge, 50% duty <span class="muted">45 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="20" data-name="LED lights"> <span>LED lighting <span class="muted">20 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="10" data-name="Phones"> <span>Phone / tablet charging <span class="muted">10 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="75" data-name="Starlink"> <span>Starlink dish <span class="muted">75 W</span></span></label>
+          <label class="check"><input type="checkbox" data-w="15" data-name="Inverter idle"> <span>Inverter idle draw <span class="muted">15 W</span></span></label>
+        </div>
+
+        <div class="field">
+          <label for="extraW">Extra load not listed</label>
+          <div class="input-group">
+            <input id="extraW" type="number" inputmode="decimal" min="0" step="1" value="0">
+            <select aria-label="Extra load unit" disabled><option>W</option></select>
+          </div>
+          <p class="hint">Total load: <strong id="loadTotal">0 W</strong></p>
+        </div>
+
+        <h2 style="margin-top:22px">The battery</h2>
+        <div class="row">
+          <div class="field">
+            <label for="volt">Pack voltage</label>
+            <div class="input-group">
+              <input id="volt" type="number" inputmode="decimal" min="1" step="0.1" value="12">
+              <select aria-label="Voltage unit" disabled><option>V</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="capacity">Capacity</label>
+            <div class="input-group">
+              <input id="capacity" type="number" inputmode="decimal" min="0" step="0.1" value="100">
+              <select id="capUnit" aria-label="Capacity unit">
+                <option value="ah" selected>Ah</option>
+                <option value="wh">Wh</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="chem">Chemistry</label>
+            <select id="chem">
+              <option value="lifepo4" selected>LiFePO4 (90% DoD)</option>
+              <option value="liion">Lithium-ion NMC (80% DoD)</option>
+              <option value="agm">AGM lead-acid (50% DoD)</option>
+              <option value="gel">Gel lead-acid (50% DoD)</option>
+              <option value="flooded">Flooded lead-acid (50% DoD)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="eff">Inverter efficiency</label>
+            <div class="input-group">
+              <input id="eff" type="number" inputmode="decimal" min="50" max="100" step="1" value="90">
+              <select aria-label="Efficiency unit" disabled><option>%</option></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="targetHours">Hours of backup wanted</label>
+            <div class="input-group">
+              <input id="targetHours" type="number" inputmode="decimal" min="0.5" step="0.5" value="8">
+              <select aria-label="Hours unit" disabled><option>h</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="peukertExp">Peukert exponent</label>
+            <div class="input-group">
+              <input id="peukertExp" type="number" inputmode="decimal" min="1" max="1.6" step="0.01" value="1.15">
+              <select aria-label="Peukert unit" disabled><option>k</option></select>
+            </div>
+          </div>
+        </div>
+
+        <label class="check"><input id="peukert" type="checkbox" checked> <span>Apply Peukert correction (lead-acid only — lithium is unaffected)</span></label>
+
+        <div class="note">
+          <strong>Efficiency covers two losses:</strong> the inverter's conversion loss and the DC wiring drop. Set 100 percent when the load is DC and wired straight to the battery. Do not forget the inverter's own idle draw — it is in the list above because it is often bigger than the load you are protecting.
+        </div>
+      </section>
+
+      <!-- RESULTS -->
+      <section class="panel result-hero results" aria-live="polite" aria-labelledby="batt-result-h">
+        <span class="label" id="batt-result-h">Runtime</span>
+        <div class="big-number" id="rtHero">—</div>
+        <div class="big-sub" id="rtSub">Add a load to begin</div>
+
+        <div class="kpi-grid">
+          <div class="kpi"><div class="k-label">Usable energy</div><div class="k-value" id="kvUsableWh">— <small>Wh</small></div></div>
+          <div class="kpi"><div class="k-label">Usable capacity</div><div class="k-value" id="kvUsableAh">— <small>Ah</small></div></div>
+          <div class="kpi"><div class="k-label">Draw at the pack</div><div class="k-value" id="kvAmps">— <small>A</small></div></div>
+          <div class="kpi"><div class="k-label">Days of backup</div><div class="k-value" id="kvDays">—</div></div>
+        </div>
+
+        <h2 style="margin-top:22px">Same pack, two chemistries</h2>
+        <div class="cmp" id="cmpBox"></div>
+
+        <div style="margin-top:14px">
+          <div class="breakdown">
+            <div class="breakdown-row"><span>Nameplate energy</span><span class="v" id="rowNominal">1,200 Wh</span></div>
+            <div class="breakdown-row"><span>Depth of discharge allowed</span><span class="v" id="rowDod">90%</span></div>
+            <div class="breakdown-row"><span>Inverter efficiency</span><span class="v" id="rowEff">90%</span></div>
+            <div class="breakdown-row"><span>Peukert factor</span><span class="v" id="rowPeukert">1.000</span></div>
+            <div class="breakdown-row total"><span>Expected runtime</span><span class="v" id="rowRuntime">—</span></div>
+          </div>
+        </div>
+
+        <div class="note" id="sizingNote"><strong>To hit your backup target:</strong> —</div>
+        <div class="note" id="cycleNote"><strong>Cycle life:</strong> —</div>
+        <div class="note" id="battError" hidden style="border-left-color:var(--bad)"></div>
+      </section>
+    </div>
+
+    <div class="ad-slot" aria-hidden="true"><!-- reserved ad space, no ad code until the site is approved --></div>
+
+    <section class="prose">
+      <h2>What this calculator answers</h2>
+      <p>“How long will it run?” is the only question anyone asks about a battery, and it is the question a battery label answers worst. A 100Ah 12V battery does not give you 100Ah, and it certainly does not give you 1,200Wh at the socket. Three things eat into the number before the first device is even switched on: the chemistry will not let you use the whole pack, the inverter loses 10 to 15 percent converting DC to AC, and in a lead-acid battery the usable capacity falls as you draw harder. This page applies all three and reports the time you will actually get — plus the pack size you would need to reach a target number of hours.</p>
+      <p>It is built for the two situations where the arithmetic matters most: sizing a small UPS for a router, a NAS or a CPAP that must ride out an outage, and sizing a solar or camper battery bank where every extra amp-hour is money and weight. Both come down to the same two multiplications.</p>
+
+      <h2>The four numbers behind the runtime</h2>
+      <div class="formula">load current (A)   = watts ÷ (inverter efficiency × pack voltage)
+usable capacity   = rated Ah × depth of discharge × Peukert factor
+runtime (h)       = usable capacity ÷ load current
+
+Peukert factor    = (rated Ah ÷ 20) ÷ load current, raised to (k − 1)   [lead-acid only]</div>
+      <p>The first line converts the load into the current the battery actually sees. A 100W load on a 12V pack through a 90 percent inverter pulls 100 ÷ (0.9 × 12) = 9.26 amps, not 8.33. On a 24V pack the same load pulls 4.63 amps, which is why doubling the voltage halves the current and lets you use thinner cable and a smaller fuse for the same power.</p>
+      <p>The second line is the part people skip. Depth of discharge is the share of the pack a healthy install should use on a regular basis: 90 percent for LiFePO4, 80 for lithium-ion NMC, and half for any lead-acid chemistry if you want the battery to reach its advertised cycle count. A 100Ah AGM really gives you 50Ah of useful energy, not 100.</p>
+      <p>The Peukert factor is the odd one. A lead-acid battery's capacity is quoted at a slow 20-hour discharge. Pull harder and the chemistry loses more energy to internal resistance than the rating suggests. The exponent k describes how bad that is: about 1.15 for AGM and gel, 1.25 for flooded cells, and effectively 1.0 for lithium, which is why the checkbox does nothing for a lithium pack. At a 9 amp draw from a 100Ah AGM, the factor is 0.91 — you lose another 9 percent on top of the 50 percent depth-of-discharge cut.</p>
+
+      <h2>Worked example: a router and an ONT through an outage</h2>
+      <div class="example">
+        <div class="ex-head">Small load, long time</div>
+        <p>A Wi-Fi router draws 12W and the fibre ONT another 8W, so the load is 20W. On a 12V 100Ah LiFePO4 pack with a 90 percent inverter, the current is 20 ÷ (0.9 × 12) = 1.85A and the usable capacity is 90Ah. Runtime is 90 ÷ 1.85 = 48.6 hours — two full days of internet from a pack the size of a car battery.</p>
+        <p>Add the inverter's 15W idle draw and the load nearly doubles to 35W: 7 minutes per amp-hour becomes about 26 hours. This is the single most common surprise in small backup systems. If the load is small and always DC, use a DC-DC converter or a 12V-native router rather than an inverter, and set the efficiency to about 95 percent.</p>
+      </div>
+
+      <h2>Worked example: the same 100Ah in AGM</h2>
+      <div class="example">
+        <div class="ex-head">Chemistry is worth more than capacity</div>
+        <p>Take the 100Ah 12V pack and make it AGM. The depth of discharge drops from 90 to 50 percent, so usable capacity is 50Ah instead of 90. At a 100W load (9.26A), the Peukert exponent of 1.15 trims that to 45.6Ah. Runtime is 45.6 ÷ 9.26 = 4.9 hours.</p>
+        <p>The LiFePO4 version of the identical pack runs 9.7 hours at the same load. Twice the usable time from the same label, and roughly four to six times the cycle life: 3,000 cycles to 80 percent capacity for LiFePO4 against 400 to 500 for AGM. On a cost-per-usable-amp-hour basis the lithium pack usually wins even at twice the sticker price, which is why the comparison bar on this page is the most useful thing on it.</p>
+      </div>
+
+      <h2>Worked example: sizing a CPAP for a night</h2>
+      <div class="example">
+        <div class="ex-head">Working backwards from the hours</div>
+        <p>A CPAP without the humidifier draws about 40W. On 12V through a 90 percent inverter that is 3.70A. Eight hours needs 29.6Ah of delivered energy, and at 90 percent depth of discharge the nameplate must be 32.9Ah. A 50Ah LiFePO4 pack gives 12.2 hours — a night plus a cushion for a second night if the humidifier stays off.</p>
+        <p>Run the same sum for a 24 hour target and the answer is 98.8Ah, which is why the “hours of backup wanted” field exists: it turns the calculator from a what-if into a shopping list. Keep 20 percent in reserve on top of whatever it says, because cold cells lose capacity and an ageing pack loses more.</p>
+      </div>
+
+      <h2>Chemistry, depth of discharge and cycle life</h2>
+      <ul>
+        <li><strong>LiFePO4:</strong> 90 percent usable, about 3,000 cycles, flat voltage curve, no maintenance, safe chemistry. The default choice for a new build.</li>
+        <li><strong>Lithium-ion NMC:</strong> 80 percent usable, about 800 cycles, lighter per watt-hour than LiFePO4 but less tolerant of abuse and more expensive to insure.</li>
+        <li><strong>AGM and gel:</strong> 50 percent usable, 400 to 500 cycles, sealed and maintenance-free, cheap to buy and heavy to carry. Accepts a high charge current, which suits a vehicle alternator.</li>
+        <li><strong>Flooded lead-acid:</strong> 50 percent usable, about 400 cycles, cheapest per amp-hour and the most forgiving of overcharge — but it needs water checks and ventilation.</li>
+      </ul>
+      <p>All four also lose capacity in the cold: figure 20 percent down at freezing for lead-acid and 10 to 15 percent for lithium, which is why a pack rated for a mild garage can come up short in an unheated shed in January.</p>
+
+      <h2>Frequently asked questions</h2>
+      <details class="faq"><summary>How long will a 100Ah battery run a 100W load?</summary>
+        <div class="faq-body"><p>A 12V 100Ah LiFePO4 pack runs about 9 hours 43 minutes through a 90 percent efficient inverter. In AGM the same pack gives roughly 4 hours 55 minutes, and in flooded lead-acid a little less than that. On a 24V 100Ah pack the runtime doubles, because the energy is twice as much for the same amp-hour label.</p></div>
+      </details>
+      <details class="faq"><summary>Is Ah or Wh the better way to compare batteries?</summary>
+        <div class="faq-body"><p>Watt-hours, always. Amp-hours only mean something alongside a voltage: a 100Ah 12V pack holds 1,200Wh, and a 100Ah 24V pack holds 2,400Wh. Solar batteries are increasingly sold in Wh or kWh for exactly this reason. Enter whichever number is printed and the calculator converts.</p></div>
+      </details>
+      <details class="faq"><summary>Why does the runtime drop so much as the load grows?</summary>
+        <div class="faq-body"><p>Two reasons. Runtime is inverse to the current, so doubling the load halves the time — that part is simple arithmetic. Then in lead-acid the Peukert effect reduces usable capacity at higher currents, so the time falls faster than the load rises. A 100Ah AGM gives about 4.9 hours at 100W but only about 1.4 hours at 300W, not the 1.6 hours that plain arithmetic would suggest.</p></div>
+      </details>
+      <details class="faq"><summary>Should I use the inverter's rated wattage instead of the equipment draw?</summary>
+        <div class="faq-body"><p>No. Size the inverter on the surge and the load on the running watts. A 1000W inverter running a 20W load still draws its own idle power, and reporting the inverter's rating as the load would understate the runtime by a factor of fifty.</p></div>
+      </details>
+      <details class="faq"><summary>How does temperature change the answer?</summary>
+        <div class="faq-body"><p>A lead-acid battery at 0°C delivers roughly 80 percent of its 25°C capacity, and at −10°C closer to 70. Lithium loses less, around 10 to 15 percent at freezing, but should not be charged below 0°C. If the pack lives in an unheated space, take 20 percent off the result for planning.</p></div>
+      </details>
+      <details class="faq"><summary>Can I connect two batteries to double the runtime?</summary>
+        <div class="faq-body"><p>In parallel you add the amp-hours at the same voltage; in series you add the voltage at the same amp-hours. Either way the watt-hours double, so the runtime doubles, provided both batteries are the same chemistry, age and state of charge. Mixing an old and a new battery in parallel drags the new one down to the old one's behaviour.</p></div>
+      </details>
+
+      <h2>Before you buy</h2>
+      <p>Measure the load with a plug-in energy meter rather than trusting a label: a “100W” TV often draws 60, and a “35W” NAS with four drives can peak at 70 on spin-up. Then decide how much of the outage you actually need to cover, because the difference between four hours and twenty-four is usually three times the battery. And check the charge side before the battery side — a pack that cannot be recharged during a multi-day outage is a one-shot resource, whatever its runtime says.</p>
+      <p class="small muted">This calculator provides estimates for planning. Real runtime depends on the age, temperature and health of the pack, the inverter's actual efficiency curve and the true duty cycle of each load. Verify against the manufacturer's discharge data before relying on a battery for medical equipment.</p>
+
+      <div class="related">
+        <a href="/ev-vs-gas/"><strong>EV vs gas fuel cost</strong><small>What the same electricity costs per mile in a car</small></a>
+        <a href="/3d-print-cost/"><strong>3D print cost calculator</strong><small>What the electricity and machine time really cost</small></a>
+        <a href="/stair-roof/"><strong>Stair stringer &amp; roof pitch</strong><small>Mounting a panel array on that roof</small></a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+        <p>Free calculators for building, selling, driving and gaming. No sign-up, no tracking, no cost.</p>
+      </div>
+      <div>
+        <h4>Calculators</h4>
+        <a href="/concrete/">Concrete slab &amp; bags</a>
+        <a href="/gravel-mulch/">Gravel, mulch &amp; decking</a>
+        <a href="/stair-roof/">Stairs &amp; roof pitch</a>
+        <a href="/seller-fee/">Seller profit &amp; fees</a>
+        <a href="/trucking-profit/">Trucking cost per mile</a>
+        <a href="/streamer-payout/">Twitch, YouTube &amp; Kick payouts</a>
+        <a href="/cobra-vs-aca/">COBRA vs ACA</a>
+        <a href="/ev-vs-gas/">EV vs gas</a>
+        <a href="/battery-runtime/">Battery runtime</a>
+        <a href="/3d-print-cost/">3D print cost &amp; AMS waste</a>
+        <a href="/exif-stripper/">EXIF &amp; metadata stripper</a>
+        <a href="/edpi/">Mouse sensitivity &amp; eDPI</a>
+      </div>
+      <div>
+        <h4>Site</h4>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacy-policy/">Privacy policy</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> Toolbench. Results are estimates — verify before you buy materials or set a price.</span>
+      <span>Built as a static site.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/calc-battery.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var B = window.BatteryCalc;
+
+  function fmt(n, d) {
+    if (!isFinite(n)) return '—';
+    return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+  }
+  function duration(hours) {
+    if (!isFinite(hours) || hours <= 0) return '—';
+    var totalMin = Math.round(hours * 60);
+    var h = Math.floor(totalMin / 60);
+    var m = totalMin % 60;
+    if (h === 0) return m + ' min';
+    return h + ' h ' + (m < 10 ? '0' + m : m) + ' min';
+  }
+  function totalLoad() {
+    var sum = 0;
+    document.querySelectorAll('#presets input:checked').forEach(function (c) {
+      sum += parseFloat(c.getAttribute('data-w')) || 0;
+    });
+    sum += parseFloat($('extraW').value) || 0;
+    return sum;
+  }
+
+  function render() {
+    var loadW = totalLoad();
+    $('loadTotal').textContent = fmt(loadW, 0) + ' W';
+
+    var r = B.compute({
+      loadW: loadW,
+      voltage: $('volt').value,
+      capacity: $('capacity').value,
+      capacityUnit: $('capUnit').value,
+      chemistry: $('chem').value,
+      inverterEff: $('eff').value,
+      peukert: $('peukert').checked,
+      peukertExp: $('peukertExp').value,
+      targetHours: $('targetHours').value
+    });
+
+    if (r.error) {
+      $('battError').hidden = false;
+      $('battError').textContent = r.error;
+      $('rtHero').textContent = '—';
+      $('rtSub').textContent = r.error;
+      $('cmpBox').textContent = '';
+      return;
+    }
+    $('battError').hidden = true;
+
+    $('rtHero').textContent = duration(r.runtimeHours);
+    $('rtSub').textContent = fmt(r.usableWh, 0) + ' Wh usable of ' + fmt(r.nominalWh, 0) + ' Wh nameplate · ' + r.chemistryLabel;
+
+    $('kvUsableWh').innerHTML = fmt(r.usableWh, 0) + ' <small>Wh</small>';
+    $('kvUsableAh').innerHTML = fmt(r.usableAh, 1) + ' <small>Ah</small>';
+    $('kvAmps').innerHTML = fmt(r.loadCurrent, 2) + ' <small>A</small>';
+    $('kvDays').innerHTML = r.runtimeDays >= 1 ? fmt(r.runtimeDays, 1) + ' <small>days</small>' : fmt(r.dailyShare * 100, 0) + ' <small>% of a day</small>';
+
+    var maxH = Math.max(r.compare[0].hours, r.compare[1].hours, 0.0001);
+    var colors = ['#4f46e5', '#a5b4fc'];
+    var html = '';
+    r.compare.forEach(function (row, idx) {
+      var pct = Math.max(2, (row.hours / maxH) * 100);
+      html += '<div class="cmp-row"><span class="cmp-label">' + row.label + '</span>' +
+        '<span class="cmp-track"><span class="cmp-fill" style="width:' + pct + '%;background:' + colors[idx] + '"></span></span>' +
+        '<span class="cmp-val">' + duration(row.hours) + '</span></div>';
+    });
+    $('cmpBox').innerHTML = html;
+
+    $('rowNominal').textContent = fmt(r.nominalWh, 0) + ' Wh (' + fmt(r.nominalAh, 1) + ' Ah at ' + fmt(r.voltage, 0) + ' V)';
+    $('rowDod').textContent = fmt(r.dod * 100, 0) + '%';
+    $('rowEff').textContent = fmt(r.inverterEff, 0) + '%';
+    $('rowPeukert').textContent = r.peukert && r.lead ? fmt(r.peukertFactor, 3) : '1.000 (not applied)';
+    $('rowRuntime').textContent = duration(r.runtimeHours);
+
+    $('sizingNote').innerHTML = '<strong>To hit ' + fmt(r.targetHours, 1) + ' hours at this load:</strong> a ' +
+      fmt(r.whForTarget, 0) + ' Wh pack — about ' + fmt(r.ahForTarget, 0) + ' Ah at ' + fmt(r.voltage, 0) +
+      ' V of ' + r.chemistryLabel + '. Add 20 percent for cold weather and ageing.';
+    $('cycleNote').innerHTML = '<strong>Cycle life:</strong> about ' + r.cycles.toLocaleString('en-US') +
+      ' full cycles to 80 percent capacity for ' + r.chemistryLabel.toLowerCase() +
+      '. At one cycle a day that is roughly ' + fmt(r.cycles / 365, 1) + ' years of daily use.';
+  }
+
+  document.querySelectorAll('#presets input').forEach(function (c) { c.addEventListener('change', render); });
+  ['extraW', 'volt', 'capacity', 'eff', 'targetHours', 'peukertExp'].forEach(function (id) {
+    $(id).addEventListener('input', render);
+  });
+  ['capUnit', 'chem'].forEach(function (id) { $(id).addEventListener('change', render); });
+  $('peukert').addEventListener('change', render);
+  $('chem').addEventListener('change', function () {
+    var k = $('chem').value;
+    $('peukertExp').value = B.chemistryOf(k).peukert;
+    $('peukertExp').disabled = !B.chemistryOf(k).lead;
+    render();
+  });
+  $('peukertExp').disabled = !B.chemistryOf($('chem').value).lead;
+
+  /* Sensible starting load: the router and the ONT, the two things people
+     put on a small UPS first. */
+  document.querySelectorAll('#presets input').forEach(function (c) {
+    var n = c.getAttribute('data-name');
+    if (n === 'Router' || n === 'ONT') c.checked = true;
+  });
+
+  render();
+})();
+</script>
+<script src="/assets/js/site.js"></script>
+</body>
+</html>

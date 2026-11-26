@@ -2,7 +2,7 @@
    quickjs runner (tests/run_quickjs.py). No Node or browser APIs here. */
 'use strict';
 
-function runAll(Concrete, Seller, Sens, Trucking, Gravel, Cobra, Ev) {
+function runAll(Concrete, Seller, Sens, Trucking, Gravel, Cobra, Ev, Stair, Battery, Streamer, Print3D, ExifScan) {
   var pass = 0;
   var fails = [];
 
@@ -447,6 +447,311 @@ function runAll(Concrete, Seller, Sens, Trucking, Gravel, Cobra, Ev) {
   var v6 = Ev.compute({ annualMiles: 10000, evMilesPerKwh: 3.5, homeRate: 0, homeSharePct: 100, publicRate: 0.5, gasMpg: 30, gasPrice: 3.6 });
   near('V6 free home charging means zero fuel cost', v6.evAnnualCost, 0, 0.0001);
   near('V6 savings equal the whole gas bill', v6.annualSavings, 1200, 0.0001);
+
+  /* ---------------- 8. Stairs and roof pitch ---------------- */
+  var s1 = Stair.computeStairs({
+    rise: 9, riseUnit: 'ftin', riseInches: 0, riseSixteenths: 0,
+    targetRiserIn: 7.5, treadDepthIn: 10.5, widthIn: 36
+  });
+  eq('S1 risers for a 9 ft rise', s1.risers, 14);
+  near('S1 riser height', s1.riserIn, 7.714286, 0.0001);
+  eq('S1 treads are one fewer than risers', s1.treads, 13);
+  near('S1 total run', s1.runIn, 136.5, 0.0001);
+  near('S1 stringer length', s1.stringerIn, 174.0582, 0.001);
+  near('S1 stair angle', s1.angleDeg, 38.3514, 0.01);
+  eq('S1 riser passes the IRC limit', s1.riserOk, true);
+  eq('S1 tread passes the IRC limit', s1.treadOk, true);
+  eq('S1 whole stair passes', s1.codePass, true);
+  near('S1 stock length adds a foot', s1.stringerOrderIn, 186.0582, 0.001);
+
+  var s2 = Stair.computeStairs({ rise: 100, riseUnit: 'in', targetRiserIn: 7.5, treadDepthIn: 10.5 });
+  eq('S2 risers for a 100 in rise', s2.risers, 13);
+  near('S2 riser height', s2.riserIn, 7.692308, 0.0001);
+  near('S2 stringer', s2.stringerIn, 160.8602, 0.001);
+  eq('S2 still passes', s2.codePass, true);
+
+  var s3 = Stair.computeStairs({ rise: 96, riseUnit: 'in', targetRiserIn: 8, treadDepthIn: 10.5 });
+  eq('S3 target riser clamped, 12 risers', s3.risers, 12);
+  near('S3 riser is 8 in', s3.riserIn, 8, 0.0001);
+  eq('S3 flags the riser over 7.75 in', s3.riserOk, false);
+  eq('S3 fails the code check', s3.codePass, false);
+
+  var s4 = Stair.computeStairs({ rise: 9, riseUnit: 'ftin', targetRiserIn: 7.5, treadDepthIn: 9.5 });
+  eq('S4 shallow tread flagged', s4.treadOk, false);
+  eq('S4 fails overall', s4.codePass, false);
+
+  var s5 = Stair.computeStairs({ rise: 2500, riseUnit: 'mm', targetRiserIn: 7.5, treadDepthIn: 10.5 });
+  near('S5 mm rise converted to inches', s5.totalRiseIn, 98.4252, 0.001);
+  eq('S5 risers', s5.risers, 13);
+  near('S5 riser height', s5.riserIn, 7.571169, 0.0001);
+  eq('S5 passes', s5.codePass, true);
+
+  var s6 = Stair.computeStairs({ rise: 9, riseUnit: 'ftin', riseInches: 8, riseSixteenths: 8, targetRiserIn: 7.5, treadDepthIn: 10.5 });
+  near('S6 feet, inches and sixteenths', s6.totalRiseIn, 116.5, 0.0001);
+  eq('S6 formatted length', Stair.toFeetInches(174.0582), '14\u2032 6\u2033 1/16');
+  eq('S6 inch fraction 7.75', Stair.toInchFrac(7.75), '7 3/4');
+  eq('S6 inch fraction 10.5', Stair.toInchFrac(10.5), '10 1/2');
+  eq('S6 inch fraction 7.714286', Stair.toInchFrac(7.714286), '7 11/16');
+  eq('S6 whole inches', Stair.toInchFrac(12), '12');
+
+  var s7 = Stair.computeStairs({ rise: 0, riseUnit: 'in' });
+  ok('S7 zero rise rejected', !!s7.error);
+  var s8 = Stair.computeStairs({ rise: 300, riseUnit: 'in' });
+  ok('S8 absurd rise rejected', !!s8.error);
+
+  var r1 = Stair.computeRoof({ pitch: 4, runFt: 12, overhangFt: 0 });
+  near('R1 pitch angle', r1.angleDeg, 18.4349, 0.001);
+  near('R1 slope percent', r1.slopePct, 33.3333, 0.001);
+  near('R1 common rafter multiplier', r1.commonMult, 1.054093, 0.000001);
+  near('R1 hip multiplier', r1.hipMult, 1.452966, 0.000001);
+  near('R1 common rafter length', r1.commonRafterFt, 12.649111, 0.001);
+  near('R1 hip rafter length', r1.hipRafterFt, 17.435596, 0.001);
+  near('R1 ridge rise', r1.riseFt, 4, 0.0001);
+
+  var r2 = Stair.computeRoof({ pitch: 6, runFt: 10, overhangFt: 2 });
+  near('R2 angle', r2.angleDeg, 26.565051, 0.0001);
+  near('R2 common multiplier', r2.commonMult, 1.118034, 0.000001);
+  near('R2 hip multiplier', r2.hipMult, 1.5, 0.000001);
+  near('R2 common rafter with overhang', r2.commonRafterFt, 13.416408, 0.001);
+  near('R2 hip rafter with overhang', r2.hipRafterFt, 18, 0.0001);
+  near('R2 total rise', r2.totalRiseFt, 6, 0.0001);
+
+  var r3 = Stair.computeRoof({ pitch: 12, runFt: 10, overhangFt: 0 });
+  near('R3 12:12 is 45 degrees', r3.angleDeg, 45, 0.0001);
+  near('R3 slope is 100 percent', r3.slopePct, 100, 0.0001);
+  near('R3 common multiplier is root 2', r3.commonMult, 1.414214, 0.000001);
+  near('R3 hip multiplier', r3.hipMult, 1.732051, 0.000001);
+  var r4 = Stair.computeRoof({ pitch: 0, runFt: 10 });
+  ok('R4 flat pitch rejected', !!r4.error);
+
+  /* ---------------- 9. Battery runtime ---------------- */
+  var b1 = Battery.compute({ loadW: 100, voltage: 12, capacity: 100, capacityUnit: 'ah', chemistry: 'lifepo4', inverterEff: 90 });
+  near('B1 nominal Wh', b1.nominalWh, 1200, 0.0001);
+  near('B1 load current', b1.loadCurrent, 9.259259, 0.00001);
+  near('B1 usable Ah at 90 percent DoD', b1.usableAh, 90, 0.0001);
+  near('B1 runtime hours', b1.runtimeHours, 9.72, 0.0001);
+  eq('B1 runtime minutes', b1.runtimeMinutes, 583);
+  near('B1 LiFePO4 comparison row', b1.compare[0].hours, 9.72, 0.0001);
+
+  var b2 = Battery.compute({ loadW: 100, voltage: 12, capacity: 100, capacityUnit: 'ah', chemistry: 'agm', inverterEff: 90, peukert: true, peukertExp: 1.25 });
+  near('B2 Peukert factor', b2.peukertFactor, 0.857232, 0.00001);
+  near('B2 usable Ah', b2.usableAh, 42.8616, 0.001);
+  near('B2 runtime hours', b2.runtimeHours, 4.62905, 0.0001);
+  near('B2 lead row uses the AGM default exponent', b2.compare[1].hours, 4.92326, 0.0001);
+
+  var b3 = Battery.compute({ loadW: 100, voltage: 12, capacity: 100, capacityUnit: 'ah', chemistry: 'agm', inverterEff: 90, peukert: false });
+  near('B3 Peukert off gives the rated half', b3.usableAh, 50, 0.0001);
+  near('B3 runtime hours', b3.runtimeHours, 5.4, 0.0001);
+
+  var b4 = Battery.compute({ loadW: 200, voltage: 12, capacity: 1280, capacityUnit: 'wh', chemistry: 'lifepo4', inverterEff: 90 });
+  near('B4 Wh input, nominal Ah', b4.nominalAh, 106.6667, 0.001);
+  near('B4 runtime hours', b4.runtimeHours, 5.184, 0.0001);
+
+  var b5 = Battery.compute({ loadW: 100, voltage: 12, capacity: 100, capacityUnit: 'ah', chemistry: 'lifepo4', inverterEff: 90, targetHours: 8 });
+  near('B5 Ah needed for the target hours', b5.ahForTarget, 82.3045, 0.001);
+  near('B5 Wh needed for the target hours', b5.whForTarget, 987.654, 0.01);
+
+  var b6 = Battery.compute({ loadW: 0, voltage: 12, capacity: 100 });
+  ok('B6 zero load rejected', !!b6.error);
+  var b7 = Battery.compute({ loadW: 100, voltage: 12, capacity: 0 });
+  ok('B7 zero capacity rejected', !!b7.error);
+  var b8 = Battery.compute({ loadW: 100, voltage: 0, capacity: 100 });
+  ok('B8 zero voltage rejected', !!b8.error);
+  var b9 = Battery.compute({ loadW: 50, voltage: 48, capacity: 100, capacityUnit: 'ah', chemistry: 'lifepo4', inverterEff: 100 });
+  near('B9 48 V pack at full efficiency', b9.runtimeHours, 86.4, 0.0001);
+
+  /* ---------------- 10. Streamer payout ---------------- */
+  var w1 = Streamer.compute({ platform: 'twitch', bits: 5000, tier1: 100, tier2: 0, tier3: 0, partnerPlus: false, inApp: false, taxRatePct: 0 });
+  near('W1 bits pay one cent each', w1.lines[0].creator, 50, 0.0001);
+  near('W1 tier 1 at 50 percent', w1.lines[1].creator, 249.5, 0.0001);
+  near('W1 creator total', w1.creatorTotal, 299.5, 0.0001);
+  near('W1 gross', w1.grossTotal, 549, 0.0001);
+  near('W1 net with no withholding', w1.net, 299.5, 0.0001);
+  near('W1 take of gross', w1.takeOfGross, 0.545537, 0.000001);
+
+  var w2 = Streamer.compute({ platform: 'twitch', tier1: 100, inApp: true, taxRatePct: 0 });
+  near('W2 app store cut before the split', w2.creatorTotal, 174.65, 0.0001);
+  near('W2 store fee recorded', w2.storeTotal, 149.7, 0.0001);
+
+  var w3 = Streamer.compute({ platform: 'twitch', tier1: 100, partnerPlus: true, taxRatePct: 0 });
+  near('W3 Partner Plus 70 percent', w3.creatorTotal, 349.3, 0.0001);
+
+  var w4 = Streamer.compute({ platform: 'youtube', superChatGross: 1000, memberships: 200, memberPrice: 4.99, inApp: false, taxRatePct: 0 });
+  near('W4 YouTube gross', w4.grossTotal, 1998, 0.0001);
+  near('W4 YouTube 70 percent', w4.creatorTotal, 1398.6, 0.0001);
+
+  var w5 = Streamer.compute({ platform: 'youtube', superChatGross: 1000, memberships: 200, memberPrice: 4.99, inApp: true, taxRatePct: 0 });
+  near('W5 iOS purchase halves the take', w5.creatorTotal, 979.02, 0.0001);
+
+  var w6 = Streamer.compute({ platform: 'kick', tier1: 100, tier2: 10, taxRatePct: 0 });
+  near('W6 Kick gross', w6.grossTotal, 598.9, 0.0001);
+  near('W6 Kick 95 percent', w6.creatorTotal, 568.955, 0.0001);
+
+  var w7 = Streamer.compute({ platform: 'twitch', bits: 5000, tier1: 100, taxRatePct: 30 });
+  near('W7 30 percent withholding', w7.net, 209.65, 0.0001);
+  var w8 = Streamer.compute({ platform: 'twitch', bits: 5000, tier1: 100, taxRatePct: 15 });
+  near('W8 15 percent treaty rate', w8.net, 254.575, 0.0001);
+
+  var w9 = Streamer.compute({ platform: 'twitch' });
+  ok('W9 empty activity rejected', !!w9.error);
+  var w10 = Streamer.compare({ tier1: 100, bits: 0, taxRatePct: 0 });
+  eq('W10 comparison covers three platforms', w10.rows.length, 3);
+  eq('W10 Kick wins a plain tier 1 sub', w10.best, 'kick');
+
+  /* ---------------- 11. 3D print cost ---------------- */
+  var p1 = Print3D.compute({
+    spoolPrice: 25, spoolWeightG: 1000, modelG: 120, purgeG: 40, supportG: 20,
+    printHours: 8, powerW: 120, kwhPrice: 0.16, printerPrice: 600, lifeHours: 4000,
+    laborMin: 0, laborRate: 0, extraCost: 0, failPct: 5, marginPct: 30, feePct: 9.5, feeFlat: 0.2
+  });
+  near('P1 cost per gram', p1.costPerG, 0.025, 0.000001);
+  near('P1 material grams including purge and support', p1.materialG, 180, 0.0001);
+  near('P1 material cost', p1.materialCost, 4.5, 0.0001);
+  near('P1 energy cost', p1.energyCost, 0.1536, 0.00001);
+  near('P1 depreciation', p1.deprCost, 1.2, 0.0001);
+  near('P1 failure multiplier', p1.wasteMultiplier, 1.052632, 0.000001);
+  near('P1 total cost with failures', p1.cost, 6.16168, 0.0001);
+  near('P1 recommended price', p1.price, 10.51518, 0.0001);
+  near('P1 marketplace fee', p1.feeAmount, 1.198942, 0.0001);
+  near('P1 profit', p1.profit, 3.154554, 0.0001);
+  near('P1 realised margin', p1.margin, 0.3, 0.000001);
+  near('P1 break-even price', p1.breakEvenPrice, 7.029485, 0.0001);
+  near('P1 purge share of the filament', p1.purgeShare, 0.222222, 0.000001);
+
+  var p2 = Print3D.compute({
+    spoolPrice: 20, spoolWeightG: 1000, modelG: 50, purgeG: 0, supportG: 0,
+    printHours: 2, powerW: 100, kwhPrice: 0.20, printerPrice: 300, lifeHours: 3000,
+    laborMin: 10, laborRate: 18, extraCost: 0.5, failPct: 0, marginPct: 40, feePct: 0, feeFlat: 0
+  });
+  near('P2 material cost', p2.materialCost, 1.0, 0.0001);
+  near('P2 labour', p2.laborCost, 3, 0.0001);
+  near('P2 total cost', p2.cost, 1 + 0.04 + 0.2 + 3 + 0.5, 0.0001);
+  near('P2 price at 40 percent margin', p2.price, (4.74) / 0.6, 0.0001);
+  near('P2 profit', p2.profit, 4.74 * 0.4 / 0.6, 0.0001);
+
+  var p3 = Print3D.compute({ spoolPrice: 25, spoolWeightG: 1000, modelG: 0 });
+  ok('P3 zero part weight rejected', !!p3.error);
+  var p4 = Print3D.compute({ spoolPrice: 25, spoolWeightG: 0, modelG: 100 });
+  ok('P4 zero spool weight rejected', !!p4.error);
+  var p5 = Print3D.compute({ spoolPrice: 25, spoolWeightG: 1000, modelG: 100, printHours: 4, marginPct: 80, feePct: 25 });
+  ok('P5 margin plus fees over 100 rejected', !!p5.error);
+
+  /* ---------------- 12. EXIF scanner ---------------- */
+  function bytesOf(str) {
+    var a = [];
+    for (var n = 0; n < str.length; n++) a.push(str.charCodeAt(n) & 255);
+    return a;
+  }
+  function be16(n) { return [(n >> 8) & 255, n & 255]; }
+  function le16(n) { return [n & 255, (n >> 8) & 255]; }
+  function be32(n) { return [(n >> 24) & 255, (n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+  function le32(n) { return [n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >> 24) & 255]; }
+  function entry(tag, type, count, value4) { return le16(tag).concat(le16(type), le32(count), value4); }
+
+  function tiffWithExif() {
+    var make = bytesOf('Canon\u0000');
+    var model = bytesOf('EOS R6\u0000');
+    var date = bytesOf('2024:05:01 12:34:56\u0000');
+    var ifd0Len = 2 + 4 * 12 + 4;
+    var makeOff = 8 + ifd0Len;
+    var modelOff = makeOff + make.length;
+    var exifIfdOff = modelOff + model.length;
+    var dateOff = exifIfdOff + 2 + 12 + 4;
+    var gpsOff = dateOff + date.length;
+    var ratOff = gpsOff + 2 + 24 + 4;
+
+    var t = bytesOf('II').concat(le16(42), le32(8));
+    t = t.concat(le16(4));
+    t = t.concat(entry(0x010F, 2, make.length, le32(makeOff)));
+    t = t.concat(entry(0x0110, 2, model.length, le32(modelOff)));
+    t = t.concat(entry(0x8769, 4, 1, le32(exifIfdOff)));
+    t = t.concat(entry(0x8825, 4, 1, le32(gpsOff)));
+    t = t.concat(le32(0));
+    t = t.concat(make, model, le16(1), entry(0x9003, 2, date.length, le32(dateOff)), le32(0));
+    t = t.concat(date);
+    t = t.concat(le16(2));
+    t = t.concat(entry(0x0001, 2, 2, [0x4E, 0, 0, 0]));
+    t = t.concat(entry(0x0002, 5, 3, le32(ratOff)));
+    t = t.concat(le32(0));
+    t = t.concat(le32(37), le32(1), le32(46), le32(1), le32(3000), le32(100));
+    return t;
+  }
+
+  function jpegWithExif() {
+    var payload = bytesOf('Exif\u0000\u0000').concat(tiffWithExif());
+    var segLen = payload.length + 2;
+    var out = [0xFF, 0xD8, 0xFF, 0xE1].concat(be16(segLen), payload);
+    out = out.concat([0xFF, 0xDA], be16(12), [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0xFF, 0xD9]);
+    return new Uint8Array(out);
+  }
+  function plainJpeg() {
+    return new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10].concat(bytesOf('JFIF\u0000'), [1, 1, 0, 0, 1, 0, 1, 0, 0], [0xFF, 0xDA, 0x00, 0x0C], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0xFF, 0xD9]));
+  }
+  function pngWith(chunks) {
+    var out = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+    chunks.forEach(function (c) { out = out.concat(be32(c.data.length), bytesOf(c.type), c.data, [0, 0, 0, 0]); });
+    out = out.concat(be32(0), bytesOf('IEND'), [0, 0, 0, 0]);
+    return new Uint8Array(out);
+  }
+  function webpWith(chunks) {
+    var body = bytesOf('WEBP');
+    chunks.forEach(function (c) {
+      body = body.concat(bytesOf(c.type), le32(c.data.length), c.data);
+      if (c.data.length % 2) body.push(0);
+    });
+    return new Uint8Array(bytesOf('RIFF').concat(le32(body.length), body));
+  }
+
+  var x1 = ExifScan.summarize(jpegWithExif());
+  eq('X1 detected as JPEG', x1.type, 'jpeg');
+  eq('X1 EXIF seen', x1.hasExif, true);
+  eq('X1 GPS seen', x1.hasGps, true);
+  eq('X1 camera make', x1.make, 'Canon');
+  eq('X1 camera model', x1.model, 'EOS R6');
+  eq('X1 original date', x1.dateTimeOriginal, '2024:05:01 12:34:56');
+  eq('X1 risk is GPS', x1.risk, 'gps');
+  ok('X1 fields list camera and location', x1.fields.some(function (f) { return f.key === 'camera'; }) && x1.fields.some(function (f) { return f.key === 'gps'; }));
+
+  var x2 = ExifScan.summarize(plainJpeg());
+  eq('X2 plain JPEG still a JPEG', x2.type, 'jpeg');
+  eq('X2 no EXIF', x2.hasExif, false);
+  eq('X2 risk is clean', x2.risk, 'clean');
+  eq('X2 no fields to strip', x2.fields.length, 0);
+
+  var x3 = ExifScan.summarize(pngWith([
+    { type: 'IHDR', data: [0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0] },
+    { type: 'eXIf', data: tiffWithExif() }
+  ]));
+  eq('X3 detected as PNG', x3.type, 'png');
+  eq('X3 PNG EXIF chunk seen', x3.hasExif, true);
+  eq('X3 PNG GPS read', x3.hasGps, true);
+
+  var x4 = ExifScan.summarize(pngWith([
+    { type: 'IHDR', data: [0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0] },
+    { type: 'tEXt', data: bytesOf('Comment\u0000made on a phone') }
+  ]));
+  eq('X4 text chunk seen', x4.hasText, true);
+  eq('X4 risk is metadata', x4.risk, 'meta');
+
+  var x5 = ExifScan.summarize(webpWith([
+    { type: 'VP8X', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+    { type: 'EXIF', data: tiffWithExif() }
+  ]));
+  eq('X5 detected as WebP', x5.type, 'webp');
+  eq('X5 WebP EXIF chunk seen', x5.hasExif, true);
+  eq('X5 WebP camera read', x5.make, 'Canon');
+
+  var x6 = ExifScan.summarize(bytesOf('not an image at all'));
+  eq('X6 unknown bytes have no type', x6.type, null);
+  eq('X6 unknown bytes unsupported', x6.supported, false);
+  var x7 = ExifScan.summarize(new Uint8Array(0));
+  eq('X7 empty input is safe', x7.size, 0);
+
+  eq('X8 clean name for a HEIC', ExifScan.cleanFileName('IMG_2041.HEIC'), 'IMG_2041-clean.jpg');
+  eq('X9 clean name keeps the PNG type', ExifScan.cleanFileName('shot.png', 'image/png'), 'shot-clean.png');
+  eq('X10 non-ascii name falls back', ExifScan.cleanFileName('\uB0B4 \uC0AC\uC9C4.jpg'), 'image-clean.jpg');
+  eq('X11 byte formatting', ExifScan.formatBytes(1536), '1.5 KB');
+  eq('X12 megabyte formatting', ExifScan.formatBytes(3 * 1024 * 1024), '3.00 MB');
 
   return { pass: pass, fails: fails };
 }

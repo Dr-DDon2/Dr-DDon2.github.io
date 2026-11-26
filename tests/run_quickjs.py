@@ -18,7 +18,9 @@ parts = []
 for name, var in [("calc-concrete.js", "ConcreteCalc"), ("calc-seller.js", "SellerCalc"),
                   ("calc-sens.js", "SensCalc"), ("calc-trucking.js", "TruckingCalc"),
                   ("calc-gravel.js", "GravelCalc"), ("calc-cobra.js", "CobraCalc"),
-                  ("calc-ev.js", "EvCalc")]:
+                  ("calc-ev.js", "EvCalc"), ("calc-stair.js", "StairCalc"),
+                  ("calc-battery.js", "BatteryCalc"), ("calc-streamer.js", "StreamerCalc"),
+                  ("calc-print3d.js", "Print3DCalc"), ("exif-scan.js", "ExifScan")]:
     src = (ROOT / "assets/js" / name).read_text(encoding="utf-8")
     parts.append("var module = {exports: {}};\n" + src + f"\nvar {var} = module.exports;\n")
 
@@ -27,7 +29,7 @@ cases = (ROOT / "tests/cases.js").read_text(encoding="utf-8").replace(
 )
 parts.append(cases)
 parts.append("""
-var result = runAll(ConcreteCalc, SellerCalc, SensCalc, TruckingCalc, GravelCalc, CobraCalc, EvCalc);
+var result = runAll(ConcreteCalc, SellerCalc, SensCalc, TruckingCalc, GravelCalc, CobraCalc, EvCalc, StairCalc, BatteryCalc, StreamerCalc, Print3DCalc, ExifScan);
 JSON.stringify({pass: result.pass, fails: result.fails});
 """)
 
