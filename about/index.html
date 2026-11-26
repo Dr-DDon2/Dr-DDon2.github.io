@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About Toolbench — Who runs this site and how the numbers are checked</title>
+<meta name="description" content="Toolbench is an independent collection of free calculators. Read how the tools are built, how the formulas are verified, and what the site does not do with your data.">
+<link rel="canonical" href="https://dr-ddon2.github.io/about/">
+<meta name="theme-color" content="#4f46e5">
+<meta property="og:type" content="article">
+<meta property="og:title" content="About Toolbench">
+<meta property="og:description" content="An independent collection of free calculators: how they are built and verified.">
+<meta property="og:url" content="https://dr-ddon2.github.io/about/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script>(function(){try{var t=localStorage.getItem('tb-theme');document.documentElement.setAttribute('data-theme',t||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="/concrete/">Concrete</a>
+      <a href="/seller-fee/">Seller fees</a>
+      <a href="/edpi/">Mouse eDPI</a>
+      <a href="/about/" aria-current="page">About</a>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1111.2 3a6.6 6.6 0 009.8 9.8z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span>/</span>About</nav>
+    <h1>About Toolbench</h1>
+    <p>A small, independent set of calculators for jobs where a wrong number costs real money.</p>
+  </div>
+
+  <section class="prose">
+    <h2>What this site is</h2>
+    <p>Toolbench is a free collection of three calculators: a concrete slab and bag estimator, a marketplace fee and profit calculator for Etsy and TikTok Shop sellers, and a mouse sensitivity converter that translates eDPI and cm/360 between seven first-person shooters. Every tool runs in the browser, needs no account, and returns an answer while you type.</p>
+    <p>The site exists because most of the alternatives are harder to use than the arithmetic they perform. Concrete calculators hide their bag yields behind a sign-up wall. Marketplace fee calculators omit the costs that actually decide whether a product is worth selling. Sensitivity converters show an eDPI number as if it were portable between games, which it is not. These pages show the inputs, show the formulas, and show the assumptions — including the ones that could be wrong.</p>
+
+    <h2>How the calculators are built</h2>
+    <p>Each tool is plain HTML, CSS and JavaScript, served as static files from GitHub Pages. There is no server, no database, no framework and no third-party script. The calculation code for each tool lives in its own small file and is shared by the page and by an automated test suite, so the numbers you see come from the same functions the tests exercise.</p>
+    <p>The test suite covers unit conversions, rounding behaviour, edge cases such as zero or negative inputs, and worked examples whose answers were calculated by hand. When a formula is changed, the tests run again before the change is published.</p>
+
+    <h2>Where the assumptions come from</h2>
+    <ul>
+      <li><strong>Concrete.</strong> Bag yields (0.60, 0.45 and 0.30 cubic feet for 80, 60 and 40 lb bags) are the published figures for standard pre-mixed concrete. Volume and unit formulas are the standard US and metric conversions.</li>
+      <li><strong>Marketplace fees.</strong> Default rates reflect Etsy’s and TikTok Shop’s published fee schedules for US sellers at the time of writing: Etsy’s 6.5 percent transaction fee plus 3 percent and $0.25 processing plus a 20 cent listing, and TikTok Shop’s 6 percent referral fee plus 2.9 percent and $0.30 processing. Every rate on that page can be edited, because fee schedules change and vary by country and category.</li>
+      <li><strong>Sensitivity.</strong> Yaw values are the reference figures used by community converters (Valorant 0.07, CS2 and Apex 0.022, Overwatch 2 and Call of Duty 0.0066, Fortnite 0.005555, Rainbow Six Siege 0.00572958). The advanced panel lets you override them if a game update changes the scale.</li>
+    </ul>
+
+    <h2>What the site does not do</h2>
+    <p>Toolbench does not have user accounts, does not accept uploads, does not store your inputs on a server, and does not use analytics or advertising cookies at present. Your theme preference is kept in your browser’s local storage and never leaves the device. If display advertising is added later, this page and the privacy policy will say so before any ad script runs, and the policy will explain how to opt out of personalised advertising.</p>
+
+    <h2>Who runs it</h2>
+    <p>Toolbench is an independent project maintained by a single developer, built in public in the <a href="https://github.com/Dr-DDon2/Dr-DDon2.github.io">GitHub repository</a> that also hosts the site. Corrections are welcome: if a formula produces a number you can prove is wrong, or a fee rate has moved, the fastest route is an issue on that repository or a message through the <a href="/contact/">contact page</a>. Fixes are usually published the same week.</p>
+
+    <h2>Editorial standards</h2>
+    <p>Pages are written for the person doing the job, not for a search engine. Each calculator page includes an explanation of every input, the exact equations used, at least three worked examples with numbers you can check with a calculator, and answers to the questions that come up in practice. Where a figure is an estimate rather than a fact — a fee that varies by country, a bag yield that differs by brand — the page says so in the same sentence rather than in a footnote.</p>
+    <p>No page on this site recommends a product or service in exchange for payment, and there are no affiliate links.</p>
+
+    <div class="related">
+      <a href="/privacy-policy/"><strong>Privacy policy</strong><small>What is stored, and what is not</small></a>
+      <a href="/contact/"><strong>Contact</strong><small>Report an error or ask a question</small></a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-about">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">TB</span><span class="brand-name">Toolbench</span></a>
+        <p>Free calculators for building, selling and gaming. No sign-up, no tracking, no cost.</p>
+      </div>
+      <div>
+        <h4>Calculators</h4>
+        <a href="/concrete/">Concrete slab &amp; bags</a>
+        <a href="/seller-fee/">Seller profit &amp; fees</a>
+        <a href="/edpi/">Mouse sensitivity &amp; eDPI</a>
+      </div>
+      <div>
+        <h4>Site</h4>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+        <a href="/privacy-policy/">Privacy policy</a>
+        <a href="/sitemap.xml">Sitemap</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> Toolbench. Results are estimates — verify before you buy materials or set a price.</span>
+      <span>Built as a static site.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/site.js"></script>
+</body>
+</html>
