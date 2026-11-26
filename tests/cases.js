@@ -489,6 +489,8 @@ function runAll(Concrete, Seller, Sens, Trucking, Gravel, Cobra, Ev, Stair, Batt
   var s6 = Stair.computeStairs({ rise: 9, riseUnit: 'ftin', riseInches: 8, riseSixteenths: 8, targetRiserIn: 7.5, treadDepthIn: 10.5 });
   near('S6 feet, inches and sixteenths', s6.totalRiseIn, 116.5, 0.0001);
   eq('S6 formatted length', Stair.toFeetInches(174.0582), '14\u2032 6\u2033 1/16');
+  eq('S6 feet-inches reduce the fraction', Stair.toFeetInches(136.5), '11\u2032 4\u2033 1/2');
+  eq('S6 whole feet format', Stair.toFeetInches(12), '1\u2032 0\u2033');
   eq('S6 inch fraction 7.75', Stair.toInchFrac(7.75), '7 3/4');
   eq('S6 inch fraction 10.5', Stair.toInchFrac(10.5), '10 1/2');
   eq('S6 inch fraction 7.714286', Stair.toInchFrac(7.714286), '7 11/16');
@@ -597,6 +599,17 @@ function runAll(Concrete, Seller, Sens, Trucking, Gravel, Cobra, Ev, Stair, Batt
   var w10 = Streamer.compare({ tier1: 100, bits: 0, taxRatePct: 0 });
   eq('W10 comparison covers three platforms', w10.rows.length, 3);
   eq('W10 Kick wins a plain tier 1 sub', w10.best, 'kick');
+  var w11 = Streamer.compare({ subGross: 499, taxRatePct: 0 });
+  near('W11 same sub revenue on Twitch', w11.rows[0].net, 249.5, 0.0001);
+  near('W11 same sub revenue on YouTube', w11.rows[1].net, 349.3, 0.0001);
+  near('W11 same sub revenue on Kick', w11.rows[2].net, 474.05, 0.0001);
+  eq('W11 Kick wins on the same revenue', w11.best, 'kick');
+  var w12 = Streamer.compare({ subGross: 499, inApp: true, taxRatePct: 0 });
+  near('W12 store fee applies to every row', w12.rows[0].net, 174.65, 0.0001);
+  near('W12 Kick after the store fee', w12.rows[2].net, 331.835, 0.0001);
+  var w13 = Streamer.compare({ subGross: 499, partnerPlus: true, taxRatePct: 0 });
+  near('W13 Partner Plus lifts the Twitch row', w13.rows[0].net, 349.3, 0.0001);
+  eq('W13 Partner Plus ties YouTube', w13.rows[0].net === w13.rows[1].net, true);
 
   /* ---------------- 11. 3D print cost ---------------- */
   var p1 = Print3D.compute({

@@ -153,11 +153,11 @@
       <section class="panel result-hero results" aria-live="polite" aria-labelledby="stair-result-h">
         <span class="label" id="stair-result-h">Build this stair</span>
         <div class="big-number" id="riserHero">14 risers</div>
-        <div class="big-sub" id="riserSub">at 7 3/4 in each, 13 treads</div>
+        <div class="big-sub" id="riserSub">at 7.714 in each · 13 treads · 108.00 in total rise</div>
         <div id="codeBadges" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px"></div>
 
         <div class="kpi-grid">
-          <div class="kpi"><div class="k-label">Riser height</div><div class="k-value" id="kvRiser">7 3/4 <small>in</small></div></div>
+          <div class="kpi"><div class="k-label">Riser height</div><div class="k-value" id="kvRiser">7.714 <small>in</small></div></div>
           <div class="kpi"><div class="k-label">Tread depth</div><div class="k-value" id="kvTread">10 1/2 <small>in</small></div></div>
           <div class="kpi"><div class="k-label">Total run</div><div class="k-value" id="kvRun">11.38 <small>ft</small></div></div>
           <div class="kpi"><div class="k-label">Stringer</div><div class="k-value" id="kvStringer">14.51 <small>ft</small></div></div>
@@ -440,7 +440,7 @@ stock length  = stringer + 12 in  (plumb cuts at both ends)</div>
     $('stairError').hidden = true;
 
     $('riserHero').textContent = r.risers + ' risers';
-    $('riserSub').textContent = 'at ' + fi(r.riserIn) + ' in each · ' + r.treads + ' treads · ' + fmt(r.totalRiseIn, 2) + ' in total rise';
+    $('riserSub').textContent = 'at ' + fmt(r.riserIn, 3) + ' in each · ' + r.treads + ' treads · ' + fmt(r.totalRiseIn, 2) + ' in total rise';
 
     var badges = $('codeBadges');
     badges.textContent = '';
@@ -448,7 +448,7 @@ stock length  = stringer + 12 in  (plumb cuts at both ends)</div>
     badges.appendChild(badge(r.treadOk, 'Tread ' + (r.treadOk ? 'at least 10 in' : 'under 10 in')));
     badges.appendChild(badge(r.widthOk, 'Width ' + (r.widthOk ? 'at least 36 in' : 'under 36 in')));
 
-    $('kvRiser').innerHTML = fi(r.riserIn) + ' <small>in</small>';
+    $('kvRiser').innerHTML = fmt(r.riserIn, 3) + ' <small>in</small>';
     $('kvTread').innerHTML = fi(r.treadIn) + ' <small>in</small>';
     $('kvRun').innerHTML = fmt(r.runFt, 2) + ' <small>ft</small>';
     $('kvStringer').innerHTML = fmt(r.stringerFt, 2) + ' <small>ft</small>';

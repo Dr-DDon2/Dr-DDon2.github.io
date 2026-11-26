@@ -21,7 +21,7 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Are my photos uploaded to a server?","acceptedAnswer":{"@type":"Answer","text":"No. The page reads the file into your browser's memory, draws it onto a canvas and encodes a new image. There is no network request with your picture in it, and the site has no backend to send it to."}},
 {"@type":"Question","name":"Does removing EXIF reduce image quality?","acceptedAnswer":{"@type":"Answer","text":"The re-encode does recompress the pixels, so a JPEG at quality 0.92 is visually identical but slightly different in bytes and a little smaller. Set the quality slider to 1.0 for a near-lossless result, or export as PNG if the file is going to be edited again."}},
-{"@type":"Question","name":"What metadata is removed?","acceptedAnswer":{"@type":"Answer","text":"EXIF (camera make and model, lens, shutter, ISO, timestamps, GPS), the embedded thumbnail, maker notes, XMP edit history, IPTC captions, PNG text chunks and the ICC colour profile, because a canvas re-encode writes only the pixels."}},
+{"@type":"Question","name":"What metadata is removed?","acceptedAnswer":{"@type":"Answer","text":"EXIF (camera make and model, lens, shutter, ISO, timestamps, GPS), the embedded thumbnail, maker notes, XMP edit history, IPTC captions and PNG text chunks, because a canvas re-encode writes only the pixels and the browser's own colour profile."}},
 {"@type":"Question","name":"Does this work with iPhone HEIC files?","acceptedAnswer":{"@type":"Answer","text":"Not directly. Browsers cannot decode HEIC, so convert the photo to JPEG first — on iOS set Camera formats to Most Compatible, or share the photo and let the system convert it. The page will say plainly when a file type is not supported."}},
 {"@type":"Question","name":"Does Instagram or WhatsApp already strip metadata?","acceptedAnswer":{"@type":"Answer","text":"Most big platforms strip metadata from the copy they publish, which is why a photo looks clean once posted. The original file still has everything, so strip it before you send it by email, upload it to a marketplace or hand the file to anyone."}}]}
 </script>
@@ -114,7 +114,7 @@
         </div>
 
         <div class="note" style="border-left-color:var(--warn)">
-          <strong>What changes:</strong> the clean file is re-encoded from the pixels, so it is not byte-identical to the original. Orientation is baked into the image so the photo still looks right, and the ICC colour profile and embedded thumbnail are dropped along with the metadata.
+          <strong>What changes:</strong> the clean file is re-encoded from the pixels, so it is not byte-identical to the original. Orientation is baked into the image so the photo still looks right, and the embedded thumbnail goes with the metadata. The camera's colour profile is replaced by the browser's plain sRGB one.
         </div>
       </section>
 
@@ -181,7 +181,7 @@
         <div class="faq-body"><p>Correct. View the page source: there is no form action, no fetch to a server and no third-party script. The file is read with the browser's FileReader API, drawn to a canvas and encoded in the same tab. You can confirm it by disconnecting from the internet after the page loads and processing a photo anyway.</p></div>
       </details>
       <details class="faq"><summary>Does stripping metadata change how the photo looks?</summary>
-        <div class="faq-body"><p>Not at quality 0.92 or above — the difference is below what a screen or a print can show. Two things do change: the orientation tag is replaced by actually rotating the pixels, and the ICC colour profile is dropped, so an image in a wide-gamut colour space can shift slightly in colour. If colour accuracy matters, export PNG and convert the profile in an editor afterwards.</p></div>
+        <div class="faq-body"><p>Not at quality 0.92 or above — the difference is below what a screen or a print can show. Two things do change: the orientation tag is replaced by actually rotating the pixels, and the camera's colour profile is replaced by the browser's plain sRGB one, so an image shot in a wide-gamut space can shift slightly in colour. If colour accuracy matters, export PNG and convert the profile in an editor afterwards.</p></div>
       </details>
       <details class="faq"><summary>Can I remove metadata from a video?</summary>
         <div class="faq-body"><p>Not here. Video containers (MP4, MOV) need a different remuxing step, and browsers cannot re-encode them reliably in a page. For video, use a desktop tool such as ffmpeg with <code>-map_metadata -1</code>.</p></div>

@@ -215,9 +215,9 @@
           <div class="breakdown" id="lineRows"></div>
         </div>
 
-        <h2 style="margin-top:22px">Same month, three platforms</h2>
+        <h2 style="margin-top:22px">The same subscriptions, three platforms</h2>
         <div class="cmp" id="cmpBox"></div>
-        <div class="note" id="cmpNote">The Twitch figure includes Bits, which have no equivalent on the other two platforms.</div>
+        <div class="note" id="cmpNote">Compares the subscription revenue in this month — the same money paid, split three different ways, after the store fee and withholding. Bits and Super Chats are excluded because the other platforms have no equivalent.</div>
         <div class="note" id="spError" hidden style="border-left-color:var(--bad)"></div>
       </section>
     </div>
@@ -414,14 +414,17 @@
     rows += '<div class="breakdown-row total"><span>Net payout</span><span class="v">' + money(r.net) + '</span></div>';
     $('lineRows').innerHTML = rows;
 
+    /* Compare the subscription money only: Bits and Super Chats have no
+       equivalent on the other two platforms. */
+    var subGross = 0;
+    r.lines.forEach(function (l) {
+      if (l.label.indexOf('Bits') !== 0) subGross += l.gross;
+    });
     var cmp = S.compare({
-      bits: $('twBits').value,
+      subGross: subGross,
       tier1: p === 'kick' ? $('kkT1').value : $('twT1').value,
       tier2: p === 'kick' ? $('kkT2').value : $('twT2').value,
       tier3: p === 'kick' ? $('kkT3').value : $('twT3').value,
-      superChatGross: $('ytSuper').value,
-      memberships: $('ytMembers').value,
-      memberPrice: $('ytPrice').value,
       partnerPlus: $('twPartner').checked,
       inApp: inApp(),
       taxRatePct: $('tax').value

@@ -465,14 +465,17 @@ profit          = price − price × fee % − fixed fee − cost</div>
       '<span style="width:' + share(r.purgeG) + '%;background:#a5b4fc;color:#1e1b4b">' + (share(r.purgeG) >= 14 ? share(r.purgeG).toFixed(0) + '%' : '') + '</span>' +
       '<span style="width:' + share(r.supportG) + '%;background:#cbd5e1;color:#334155">' + (share(r.supportG) >= 14 ? share(r.supportG).toFixed(0) + '%' : '') + '</span>';
 
+    /* Base costs in their own rows, with the failure gross-up as one extra
+       line, so the filament row always matches grams × price per gram. */
+    var failExtra = r.attemptWasteCost - (r.materialCost + r.energyCost + r.deprCost);
     $('rowFilGrams').textContent = fmt(r.materialG, 0) + ' g at $' + r.costPerG.toFixed(4) + '/g';
-    $('rowFilament').textContent = money(r.attemptMaterial);
-    $('rowWasteMat').textContent = money(r.wasteMaterialCost * r.wasteMultiplier);
-    $('rowEnergy').textContent = money(r.attemptEnergy) + ' (' + fmt(r.energyKwh, 2) + ' kWh)';
-    $('rowDepr').textContent = money(r.attemptDepr);
+    $('rowFilament').textContent = money(r.materialCost);
+    $('rowWasteMat').textContent = money(r.wasteMaterialCost);
+    $('rowEnergy').textContent = money(r.energyCost) + ' (' + fmt(r.energyKwh, 2) + ' kWh)';
+    $('rowDepr').textContent = money(r.deprCost);
     $('rowLabor').textContent = money(r.laborCost);
     $('rowExtra').textContent = money(r.extraCost);
-    $('rowFail').textContent = '+' + fmt((r.wasteMultiplier - 1) * 100, 1) + '% on material, power and machine';
+    $('rowFail').textContent = money(failExtra) + ' (×' + fmt(r.wasteMultiplier, 3) + ')';
     $('rowCost').textContent = money(r.cost);
 
     $('breakEvenNote').innerHTML = '<strong>Break-even:</strong> ' + money(r.breakEvenPrice) +

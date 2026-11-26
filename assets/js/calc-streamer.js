@@ -136,31 +136,44 @@
   }
 
   /**
-   * compare(input) — the same activity run through all three platforms, so a
-   * creator can see what the choice of platform is worth.
+   * compare(input) — the same subscription revenue on all three platforms, so
+   * the value of the split is visible. Pass `subGross` (what viewers paid for
+   * subscriptions and memberships) for an exact comparison, or the tier counts
+   * and the tier prices are used. Bits and Super Chats are not comparable
+   * between platforms and are left out.
    */
   function compare(input) {
     var i = input || {};
-    var subs = { tier1: nonNeg(i.tier1), tier2: nonNeg(i.tier2), tier3: nonNeg(i.tier3) };
+    var taxPct = nonNeg(i.taxRatePct, 0);
+    if (taxPct > 100) taxPct = 100;
+
+    var storeFee = num(i.storeFeePct);
+    if (!isFinite(storeFee) || storeFee < 0) storeFee = 30;
+    var storeMul = i.inApp ? (1 - storeFee / 100) : 1;
+
+    var subGross = num(i.subGross);
+    if (!isFinite(subGross) || subGross < 0) {
+      subGross = nonNeg(i.tier1) * TIERS[0].price +
+                 nonNeg(i.tier2) * TIERS[1].price +
+                 nonNeg(i.tier3) * TIERS[2].price;
+    }
+
     var rows = ['twitch', 'youtube', 'kick'].map(function (key) {
-      var args = {
-        platform: key,
-        tier1: subs.tier1, tier2: subs.tier2, tier3: subs.tier3,
-        partnerPlus: i.partnerPlus, inApp: i.inApp, storeFeePct: i.storeFeePct,
-        taxRatePct: i.taxRatePct
+      var platform = PLATFORMS[key];
+      var share = (key === 'twitch' && i.partnerPlus) ? platform.partnerShare : platform.share;
+      var creator = subGross * storeMul * share;
+      return {
+        key: key,
+        label: platform.label,
+        share: share,
+        gross: subGross,
+        creator: creator,
+        net: creator * (1 - taxPct / 100),
+        ok: subGross > 0
       };
-      if (key === 'youtube') {
-        args.superChatGross = nonNeg(i.superChatGross);
-        args.memberships = nonNeg(i.memberships);
-        args.memberPrice = i.memberPrice;
-      } else if (key === 'twitch') {
-        args.bits = nonNeg(i.bits);
-      }
-      var r = compute(args);
-      return { key: key, label: PLATFORMS[key].label, net: r.error ? 0 : r.net, ok: !r.error };
     });
     var best = rows.reduce(function (a, b) { return b.net > a.net ? b : a; }, rows[0]);
-    return { rows: rows, best: best.key };
+    return { rows: rows, best: best.key, subGross: subGross };
   }
 
   return {

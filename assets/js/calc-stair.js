@@ -64,7 +64,10 @@
     var sixteenth = Math.round((rem - inch) * 16);
     if (sixteenth === 16) { sixteenth = 0; inch += 1; }
     if (inch === 12) { inch = 0; whole += 1; }
-    return sign + whole + '\u2032 ' + inch + '\u2033' + (sixteenth ? ' ' + sixteenth + '/16' : '');
+    if (!sixteenth) return sign + whole + '\u2032 ' + inch + '\u2033';
+    var a = sixteenth, b = 16;
+    while (b) { var t = b; b = a % b; a = t; }
+    return sign + whole + '\u2032 ' + inch + '\u2033 ' + (sixteenth / a) + '/' + (16 / a);
   }
 
   /* Format a decimal inch value as whole inches and sixteenths, e.g. 7.75 -> 7 3/4"

@@ -394,7 +394,7 @@ Peukert factor    = (rated Ah ÷ 20) ÷ load current, raised to (k − 1)   [lea
       fmt(r.whForTarget, 0) + ' Wh pack — about ' + fmt(r.ahForTarget, 0) + ' Ah at ' + fmt(r.voltage, 0) +
       ' V of ' + r.chemistryLabel + '. Add 20 percent for cold weather and ageing.';
     $('cycleNote').innerHTML = '<strong>Cycle life:</strong> about ' + r.cycles.toLocaleString('en-US') +
-      ' full cycles to 80 percent capacity for ' + r.chemistryLabel.toLowerCase() +
+      ' full cycles to 80 percent capacity for ' + r.chemistryLabel +
       '. At one cycle a day that is roughly ' + fmt(r.cycles / 365, 1) + ' years of daily use.';
   }
 
@@ -410,6 +410,7 @@ Peukert factor    = (rated Ah ÷ 20) ÷ load current, raised to (k − 1)   [lea
     $('peukertExp').disabled = !B.chemistryOf(k).lead;
     render();
   });
+  $('peukertExp').value = B.chemistryOf($('chem').value).peukert;
   $('peukertExp').disabled = !B.chemistryOf($('chem').value).lead;
 
   /* Sensible starting load: the router and the ONT, the two things people
