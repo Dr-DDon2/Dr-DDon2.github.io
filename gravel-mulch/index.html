@@ -72,15 +72,15 @@
           <div class="field">
             <label for="material">Material</label>
             <select id="material">
-              <option value="peagravel" selected>Pea gravel — 1.35 ton/yd³</option>
+              <option value="peagravel">Pea gravel — 1.35 ton/yd³</option>
               <option value="crushedstone">Crushed stone 3/4 in. — 1.40 ton/yd³</option>
               <option value="riverrock">River rock — 1.30 ton/yd³</option>
               <option value="sand">Sand — 1.35 ton/yd³</option>
               <option value="topsoil">Topsoil — 1.10 ton/yd³</option>
               <option value="compost">Compost — 0.55 ton/yd³</option>
-              <option value="mulch">Mulch (bark) — 0.40 ton/yd³</option>
+              <option value="mulch" selected>Mulch (bark) — 0.40 ton/yd³</option>
             </select>
-            <p class="hint" id="materialNote">Smooth 3/8 in. stone for beds, paths and drainage.</p>
+            <p class="hint" id="materialNote">Shredded bark; settles as it weathers.</p>
           </div>
 
           <div class="row">
@@ -147,7 +147,7 @@
               <div class="field">
                 <label for="density">Density (ton per cubic yard)</label>
                 <div class="input-group">
-                  <input id="density" type="number" inputmode="decimal" min="0" step="any" value="1.35">
+                  <input id="density" type="number" inputmode="decimal" min="0" step="any" value="0.40">
                   <select aria-label="Unit" disabled><option>ton/yd³</option></select>
                 </div>
                 <p class="hint">Follows the material you pick. Override it with the supplier’s figure if they quote one.</p>
