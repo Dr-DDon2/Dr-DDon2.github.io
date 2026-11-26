@@ -457,7 +457,7 @@ stock length  = stringer + 12 in  (plumb cuts at both ends)</div>
     $('rowTreads').textContent = String(r.treads);
     $('rowRun').textContent = fmt(r.runIn, 2) + ' in (' + S.toFeetInches(r.runIn) + ')';
     $('rowDiag').textContent = fmt(r.stringerIn, 2) + ' in (' + S.toFeetInches(r.stringerIn) + ')';
-    $('rowStock').textContent = S.toFeetInches(r.stringerOrderIn) + ' · ' + fmt(r.stringerMm, 0) + ' mm';    $('rowAngle').textContent = fmt(r.angleDeg, 2) + '°';
+    $('rowStock').textContent = S.toFeetInches(r.stringerOrderIn) + ' · ' + fmt(r.stringerOrderMm, 0) + ' mm';    $('rowAngle').textContent = fmt(r.angleDeg, 2) + '°';
 
     $('tcRiser').textContent = fmt(r.riserIn, 3) + ' in';
     $('tsRiser').textContent = r.riserOk ? 'pass' : 'fail';

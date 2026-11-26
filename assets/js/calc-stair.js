@@ -156,6 +156,7 @@
       stringerFt: stringerIn / IN_PER_FT,
       stringerMm: stringerIn * MM_PER_IN,
       stringerOrderIn: stringerOrderIn,
+      stringerOrderMm: stringerOrderIn * MM_PER_IN,
       angleDeg: angleDeg,
       pitchRatio: pitchRatio,
       slopePct: pitchRatio * 100,
