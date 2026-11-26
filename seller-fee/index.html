@@ -343,6 +343,18 @@ break-even price = (product cost + shipping cost + listing + fixed fee
   }
   function pct(n, d) { return (isFinite(n) ? n.toFixed(d === undefined ? 1 : d) : '—') + '%'; }
 
+  /* Round shares to whole percentages that add up to exactly 100. */
+  function wholePercents(values) {
+    var total = values.reduce(function (a, b) { return a + b; }, 0) || 1;
+    var exact = values.map(function (v) { return v / total * 100; });
+    var out = exact.map(Math.floor);
+    var short = 100 - out.reduce(function (a, b) { return a + b; }, 0);
+    var order = exact.map(function (v, i) { return { i: i, f: v - Math.floor(v) }; })
+      .sort(function (a, b) { return b.f - a.f; });
+    for (var i = 0; i < short; i++) out[order[i % order.length].i] += 1;
+    return out;
+  }
+
   var current = 'etsy';
 
   var platformMeta = {
@@ -447,11 +459,12 @@ break-even price = (product cost + shipping cost + listing + fixed fee
 
     var legend = $('donutLegend');
     legend.innerHTML = '';
-    r.segments.forEach(function (s) {
-      if (s.value <= 0.0001) return;
+    var shown = r.segments.filter(function (s) { return s.value > 0.0001; });
+    var labels = wholePercents(shown.map(function (s) { return s.value; }));
+    shown.forEach(function (s, idx) {
       var row = document.createElement('div');
       row.className = 'dl-row';
-      row.innerHTML = '<i style="background:' + s.color + '"></i><span>' + s.label + '</span><span class="dl-val">' + money(s.value) + ' · ' + pct(s.pct, 0) + '</span>';
+      row.innerHTML = '<i style="background:' + s.color + '"></i><span>' + s.label + '</span><span class="dl-val">' + money(s.value) + ' · ' + labels[idx] + '%</span>';
       legend.appendChild(row);
     });
     $('donutPct').textContent = pct(r.marginPct, 0);

@@ -320,6 +320,43 @@ bags              = ⌈ (volume + waste) ÷ bag yield ⌉</div>
   }
   function money(n) { return '$' + fmt(n, 2); }
 
+  /* Keep the physical size when the unit selector changes, so 4 m never
+     silently becomes 4 ft. */
+  var FT_PER_M = 3.280839895013123;
+  var prevUnit = { length: $('lengthUnit').value, width: $('widthUnit').value, thickness: $('thicknessUnit').value };
+
+  function feetOf(value, unit, inches) {
+    var v = parseFloat(value);
+    if (!isFinite(v)) v = 0;
+    if (unit === 'm') return v * FT_PER_M;
+    if (unit === 'cm') return (v / 100) * FT_PER_M;
+    if (unit === 'in') return v / 12;
+    var inch = parseFloat(inches);
+    if (!isFinite(inch)) inch = 0;
+    return v + inch / 12;
+  }
+
+  function convertUnit(kind) {
+    var main = $(kind);
+    var unitEl = $(kind + 'Unit');
+    var inchesEl = $(kind + 'In');
+    var from = prevUnit[kind];
+    var to = unitEl.value;
+    if (from === to) return;
+    var feet = feetOf(main.value, from, inchesEl ? inchesEl.value : 0);
+    if (to === 'm') main.value = +(feet / FT_PER_M).toFixed(3);
+    else if (to === 'cm') main.value = +((feet / FT_PER_M) * 100).toFixed(2);
+    else if (to === 'in') main.value = +(feet * 12).toFixed(2);
+    else if (to === 'ftin') {
+      var whole = Math.floor(feet + 1e-9);
+      var inch = Math.round((feet - whole) * 120) / 10;
+      if (inch >= 12) { whole += 1; inch = 0; }
+      main.value = whole;
+      if (inchesEl) inchesEl.value = inch;
+    } else main.value = +(feet).toFixed(3);
+    prevUnit[kind] = to;
+  }
+
   function syncUnitFields() {
     $('lengthInWrap').hidden = $('lengthUnit').value !== 'ftin';
     $('widthInWrap').hidden = $('widthUnit').value !== 'ftin';
@@ -383,9 +420,14 @@ bags              = ⌈ (volume + waste) ÷ bag yield ⌉</div>
   ['length', 'lengthIn', 'width', 'widthIn', 'thickness', 'waste', 'pricePerBag'].forEach(function (id) {
     $(id).addEventListener('input', render);
   });
-  ['lengthUnit', 'widthUnit', 'thicknessUnit', 'bagSize'].forEach(function (id) {
-    $(id).addEventListener('change', function () { syncUnitFields(); render(); });
+  ['lengthUnit', 'widthUnit', 'thicknessUnit'].forEach(function (id) {
+    $(id).addEventListener('change', function () {
+      convertUnit(id.replace('Unit', ''));
+      syncUnitFields();
+      render();
+    });
   });
+  $('bagSize').addEventListener('change', render);
 
   syncUnitFields();
   render();

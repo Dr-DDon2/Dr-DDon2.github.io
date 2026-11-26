@@ -314,8 +314,8 @@ sensitivity     = 360 ÷ (counts per 360° × yaw)</div>
 
     var b = S.band(r.cm360);
     $('bandMarker').style.left = (S.bandPosition(r.cm360) * 100).toFixed(2) + '%';
-    var words = { 'very-high': 'Very high — wrist aim, tiny movements.', 'high': 'High — wrist aim with quick turns.', 'balanced': 'Balanced — the most common FPS range.', 'low': 'Low — arm aim, steadier tracking.', 'very-low': 'Very low — full arm aim on a wide desk.' };
-    $('bandNote').innerHTML = '<strong>' + b.label + '.</strong> ' + words[b.key] + ' That is ' + fmt(r.cm360, 1) + ' cm per 360°, inside the ' + b.note.toLowerCase() + ' band.';
+    var words = { 'very-high': 'wrist aim with tiny movements', 'high': 'wrist aiming with quick turns', 'balanced': 'the most common FPS range', 'low': 'arm aim with steadier tracking', 'very-low': 'full arm aim on a wide desk' };
+    $('bandNote').innerHTML = '<strong>' + b.label + ' sensitivity</strong> — ' + words[b.key] + '. Your ' + fmt(r.cm360, 1) + ' cm per 360° sits in this band.';
 
     // cross-game table
     var rows = S.convertAll(r.dpi, r.cm360);
